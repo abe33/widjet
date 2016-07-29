@@ -155,8 +155,8 @@ export default function widgets (name, selector, options = {}, block) {
     Array.prototype.forEach.call(elements, function (element) {
       if (!canBeHandled(element)) { return }
 
-      const args = [widget, element, Object.create(options), elements]
       const widget = new Widget(element)
+      const args = [widget, element, clone(options), elements]
       WIDGETS[name].call(...args)
 
       element.classList.add(handledClass)
@@ -190,9 +190,6 @@ export default function widgets (name, selector, options = {}, block) {
     }
   })
 }
-
-widgets.Hash = Hash
-widgets.domEvent = domEvent
 
 widgets.dispatch = function dispatch (source, type, properties = {}) {
   if (typeof source === 'string') {

@@ -6,13 +6,16 @@ import widgets from '../src/index'
 describe('widgets', () => {
   jsdom()
 
-  let [spy, widget, element] = []
+  let [spy, eventSpy, widget, element] = []
 
   beforeEach(() => {
     spy = sinon.spy()
+    eventSpy = sinon.spy()
 
     document.body.innerHTML = '<div class="dummy"></div>'
     element = document.body.querySelector('div')
+
+    document.addEventListener('dummy:handled', eventSpy)
 
     widgets.define('dummy', spy)
   })
@@ -36,6 +39,24 @@ describe('widgets', () => {
 
     it('activates the widget object', () => {
       expect(widget.active).to.be.ok()
+    })
+
+    it('emits an event', () => {
+      expect(eventSpy.called).to.be.ok()
+    })
+
+    it('decorates the target node with a handled class', () => {
+      expect(element.classList.contains('dummy-handled')).to.be.ok()
+    })
+
+    it('passes any extra options to the widget function', () => {
+      document.body.innerHTML = '<div class="dummy"></div>'
+      element = document.body.querySelector('div')
+
+      widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10})
+
+      expect(spy.getCall(1).args[0]).to.eql(element)
+      expect(spy.getCall(1).args[1]).to.eql({foo: 'bar', baz: 10})
     })
   })
 
