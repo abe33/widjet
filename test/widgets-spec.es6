@@ -58,6 +58,20 @@ describe('widgets', () => {
       expect(spy.getCall(1).args[0]).to.eql(element)
       expect(spy.getCall(1).args[1]).to.eql({foo: 'bar', baz: 10})
     })
+
+    it('calls the passed-in block when called with one', () => {
+      spy = sinon.spy()
+
+      document.body.innerHTML = '<div class="dummy"></div>'
+      element = document.body.querySelector('div')
+
+      widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10}, spy)
+
+      widget = widgets.widgetsFor(element, 'dummy')
+
+      expect(spy.calledOn(element)).to.be.ok()
+      expect(spy.calledWith(element, widget)).to.be.ok()
+    })
   })
 
   describe('with a if condition', () => {
