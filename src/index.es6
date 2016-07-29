@@ -1,5 +1,6 @@
 import {domEvent, clone} from 'wigo-utils'
 import Hash from './hash'
+import Widget from './widget'
 
 /**
  * The `WIDGETS` object stores all the registered widget factories.
@@ -154,8 +155,8 @@ export default function widgets (name, selector, options = {}, block) {
     Array.prototype.forEach.call(elements, function (element) {
       if (!canBeHandled(element)) { return }
 
-      const widget = new widgets.Widget(element)
       const args = [widget, element, Object.create(options), elements]
+      const widget = new Widget(element)
       WIDGETS[name].call(...args)
 
       element.classList.add(handledClass)
@@ -321,27 +322,4 @@ widgets.activate = function (...names) {
 widgets.deactivate = function (...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES) }
   names.forEach(name => INSTANCES[name].each(value => value.deactivate()))
-}
-
-widgets.Widget = class Widget {
-  constructor (element) {
-    this.active = false
-    this.element = element
-  }
-
-  activate () {
-    if (this.active) { return }
-    this.active = true
-    this.activated && this.activated()
-  }
-
-  deactivate () {
-    if (!this.active) { return }
-    this.active = false
-    this.deactivated && this.deactivated()
-  }
-
-  init () { this.initialized && this.initialized() }
-
-  dispose () { this.disposed && this.disposed() }
 }
