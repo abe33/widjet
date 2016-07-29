@@ -5,9 +5,11 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
-    "browserify": "browserify src/index.es6 -o lib/index.js -t babelify --extension=.es6",
+    "babel": "babel src --out-dir lib",
+    "browserify": "browserify src/index.es6 -o dist/index.js -t babelify --extension=.es6",
     "standard": "standard src/*.es6 test/*.es6",
-    "esdoc": "esdoc -c esdoc.json"
+    "esdoc": "esdoc -c esdoc.json",
+    "install": "npm run babel"
   },
   "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
   "license": "MIT",
