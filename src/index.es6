@@ -1,5 +1,5 @@
+import {domEvent, clone} from 'wigo-utils'
 import Hash from './hash'
-import domEvent from './dom-event'
 
 /**
  * The `WIDGETS` object stores all the registered widget factories.
