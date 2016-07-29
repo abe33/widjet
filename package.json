@@ -34,7 +34,9 @@
     "sinon": "^1.17.4",
     "standard": "^5.4.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "wigo-utils": "*"
+  },
   "standard": {
     "parser": "babel-eslint",
     "globals": [
