@@ -1,4 +1,4 @@
-import {domEvent, clone} from 'wigo-utils'
+import {domEvent, clone} from 'widjet-utils'
 import Hash from './hash'
 import Widget from './widget'
 

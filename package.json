@@ -1,5 +1,5 @@
 {
-  "name": "wigo",
+  "name": "widjet",
   "version": "0.0.0",
   "description": "A simple and lightweight widget helper for the web",
   "main": "lib/index.js",
@@ -11,13 +11,13 @@
     "esdoc": "esdoc -c esdoc.json",
     "install": "npm run babel"
   },
-  "keywords": ["widgets", "widget", "web", "wigo"],
+  "keywords": ["widgets", "widget", "web", "widjet"],
   "repository": {
     "type": "git",
-    "url": "git://github.com/abe33/wigo.git"
+    "url": "git://github.com/abe33/widjet.git"
   },
-  "bugs": "http://github.com/abe33/wigo/issues",
-  "commits": "http://github.com/abe33/wigo/commits",
+  "bugs": "http://github.com/abe33/widjet/issues",
+  "commits": "http://github.com/abe33/widjet/commits",
   "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -35,7 +35,7 @@
     "standard": "^5.4.1"
   },
   "dependencies": {
-    "wigo-utils": "*"
+    "widjet-utils": "*"
   },
   "standard": {
     "parser": "babel-eslint",
