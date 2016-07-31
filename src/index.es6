@@ -132,16 +132,16 @@ export default function widgets (name, selector, options = {}, block) {
     mediaHandler = function (element, widget) {
       if (!widget) { return }
 
-      const condition_matched = testCondition(mediaCondition, element)
+      const conditionMatched = testCondition(mediaCondition, element)
 
-      if (condition_matched && !widget.active) {
+      if (conditionMatched && !widget.active) {
         widget.activate()
-      } else if (!condition_matched && widget.active) {
+      } else if (!conditionMatched && widget.active) {
         widget.deactivate()
       }
     }
 
-    targetWindow.addEventListener('resize', () => {
+    widgets.subscribe(name, targetWindow, 'resize', () => {
       instances.eachPair((element, widget) => mediaHandler(element, widget))
     })
   }
@@ -275,7 +275,11 @@ widgets.delete = function (name) {
 widgets.reset = function (...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES) }
 
-  names.forEach(name => widgets.delete(name))
+  names.forEach(name => {
+    widgets.delete(name)
+    INSTANCES[name].clear()
+    delete INSTANCES[name]
+  })
 }
 
 widgets.widgetsFor = function (element, widget) {

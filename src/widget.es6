@@ -32,6 +32,7 @@ export default class Widget {
     if (this.disposed) { return }
 
     this.element.classList.remove(this.handledClass)
+
     this.disposable && this.disposable.dispose()
 
     delete this.element

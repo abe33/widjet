@@ -4,14 +4,24 @@ import sinon from 'sinon'
 import {Disposable} from 'widjet-disposables'
 import widgets from '../src/index'
 
+function resizeTo (w, h) {
+  window.innerWidth = w
+  window.innerHeight = h
+  widgets.dispatch(window, 'resize')
+}
+
 describe('widgets', () => {
   jsdom()
 
   let [spy, eventSpy, widget, element] = []
 
   beforeEach(() => {
+    widgets.reset()
+
     spy = sinon.spy()
     eventSpy = sinon.spy()
+
+    resizeTo(1024, 768)
 
     document.body.innerHTML = '<div class="dummy"></div>'
     element = document.body.querySelector('div')
@@ -20,8 +30,6 @@ describe('widgets', () => {
 
     widgets.define('dummy', spy)
   })
-
-  afterEach(() => widgets.reset())
 
   describe('without any conditions', () => {
     beforeEach(() => {
@@ -126,13 +134,33 @@ describe('widgets', () => {
     })
   })
 
+  describe('with a media condition', () => {
+    describe('that is not fulfilled at the widget creation', () => {
+      beforeEach(() => {
+        widgets('dummy', '.dummy', {on: 'init', media: {max: 768}})
+
+        widget = widgets.widgetsFor(element, 'dummy')
+      })
+
+      it('does not activate the widget', () => {
+        expect(widget.active).not.to.be.ok()
+      })
+
+      describe('when the window is resized so that the condition is matched', () => {
+        it('now activates the widget', () => {
+          resizeTo(500, 1024)
+
+          expect(widget.active).to.be.ok()
+        })
+      })
+    })
+  })
+
   describe('.dispose()', () => {
-    beforeEach(() => {
+    it('removes the class on the target element', () => {
       widgets('dummy', '.dummy', {on: 'init'})
       widget = widgets.widgetsFor(element, 'dummy')
       widget.dispose()
-    })
-    it('removes the class on the target element', () => {
       expect(element.classList.contains('dummy-handled')).not.to.be.ok()
     })
 
@@ -142,6 +170,7 @@ describe('widgets', () => {
         widgets.define('dummy', () => new Disposable(spy))
         widgets('dummy', '.dummy', {on: 'init'})
         widget = widgets.widgetsFor(element, 'dummy')
+
         widget.dispose()
       })
 
