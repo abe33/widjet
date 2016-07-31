@@ -156,11 +156,12 @@ export default function widgets (name, selector, options = {}, block) {
     Array.prototype.forEach.call(elements, function (element) {
       if (!canBeHandled(element)) { return }
 
-      const widget = new Widget(element)
-      const args = [widget, element, clone(options), elements]
-      WIDGETS[name].call(...args)
+      const widget = new Widget(
+        element, WIDGETS[name], clone(options), handledClass
+      )
 
-      element.classList.add(handledClass)
+      widget.init()
+
       instances.set(element, widget)
 
       // The widgets activation state are resolved at creation

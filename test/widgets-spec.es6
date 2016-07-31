@@ -1,6 +1,7 @@
 import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 import sinon from 'sinon'
+import {Disposable} from 'widjet-disposables'
 import widgets from '../src/index'
 
 describe('widgets', () => {
@@ -75,7 +76,7 @@ describe('widgets', () => {
   })
 
   describe('with a if condition', () => {
-    describe('that return true', () => {
+    describe('that returns true', () => {
       beforeEach(() => {
         widgets('dummy', '.dummy', {on: 'custom:event', if: () => true})
 
@@ -87,7 +88,7 @@ describe('widgets', () => {
       })
     })
 
-    describe('that return false', () => {
+    describe('that returns false', () => {
       beforeEach(() => {
         widgets('dummy', '.dummy', {on: 'custom:event', if: () => false})
         widgets.dispatch('custom:event')
@@ -100,7 +101,7 @@ describe('widgets', () => {
   })
 
   describe('with a unless condition', () => {
-    describe('that return true', () => {
+    describe('that returns true', () => {
       beforeEach(() => {
         widgets('dummy', '.dummy', {on: 'custom:event', unless: () => true})
 
@@ -112,7 +113,7 @@ describe('widgets', () => {
       })
     })
 
-    describe('that return false', () => {
+    describe('that returns false', () => {
       beforeEach(() => {
         widgets('dummy', '.dummy', {on: 'custom:event', unless: () => false})
 
@@ -120,6 +121,31 @@ describe('widgets', () => {
       })
 
       it('calls the widget handler', () => {
+        expect(spy.called).to.be.ok()
+      })
+    })
+  })
+
+  describe('.dispose()', () => {
+    beforeEach(() => {
+      widgets('dummy', '.dummy', {on: 'init'})
+      widget = widgets.widgetsFor(element, 'dummy')
+      widget.dispose()
+    })
+    it('removes the class on the target element', () => {
+      expect(element.classList.contains('dummy-handled')).not.to.be.ok()
+    })
+
+    describe('when the widget handler returns a disposable', () => {
+      beforeEach(() => {
+        spy = sinon.spy()
+        widgets.define('dummy', () => new Disposable(spy))
+        widgets('dummy', '.dummy', {on: 'init'})
+        widget = widgets.widgetsFor(element, 'dummy')
+        widget.dispose()
+      })
+
+      it('calls the disposable dispose method', () => {
         expect(spy.called).to.be.ok()
       })
     })
