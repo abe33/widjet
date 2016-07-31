@@ -1,4 +1,5 @@
 import {domEvent, clone} from 'widjet-utils'
+import {DisposableEvent} from 'widjet-disposables'
 import Hash from './hash'
 import Widget from './widget'
 
@@ -257,7 +258,7 @@ widgets.$define = function (name, baseOptions = {}, block) {
  */
 widgets.delete = function (name) {
   if (SUBSCRIPTIONS[name]) {
-    SUBSCRIPTIONS[name].forEach(subscription => subscription.off())
+    SUBSCRIPTIONS[name].forEach(subscription => subscription.dispose())
   }
   widgets.release(name)
   delete WIDGETS[name]
@@ -290,10 +291,7 @@ widgets.widgetsFor = function (element, widget) {
 
 widgets.subscribe = function (name, to, evt, handler) {
   SUBSCRIPTIONS[name] || (SUBSCRIPTIONS[name] = [])
-  to.addEventListener(evt, handler)
-  const subscription = {
-    off () { to.removeEventListener(evt, handler) }
-  }
+  const subscription = new DisposableEvent(to, evt, handler)
   SUBSCRIPTIONS[name].push(subscription)
   return subscription
 }
