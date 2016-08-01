@@ -154,6 +154,26 @@ describe('widgets', () => {
         })
       })
     })
+
+    describe('that is fulfilled at the widget creation', () => {
+      beforeEach(() => {
+        widgets('dummy', '.dummy', {on: 'init', media: {min: 768}})
+
+        widget = widgets.widgetsFor(element, 'dummy')
+      })
+
+      it('does not activate the widget', () => {
+        expect(widget.active).to.be.ok()
+      })
+
+      describe('when the window is resized so that the condition is matched', () => {
+        it('now activates the widget', () => {
+          resizeTo(500, 1024)
+
+          expect(widget.active).not.to.be.ok()
+        })
+      })
+    })
   })
 
   describe('.dispose()', () => {
