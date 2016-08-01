@@ -42,7 +42,7 @@ describe('widgets', () => {
 
     it('calls the widget method and creates a widget', () => {
       expect(spy.calledOn(widget)).to.be.ok()
-      expect(spy.calledWith(element)).to.be.ok()
+      expect(spy.calledWith(element, {}, widget)).to.be.ok()
       expect(widget.element).to.be(element)
     })
 
@@ -63,9 +63,9 @@ describe('widgets', () => {
       element = document.body.querySelector('div')
 
       widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10})
+      widget = widgets.widgetsFor(element, 'dummy')
 
-      expect(spy.getCall(1).args[0]).to.eql(element)
-      expect(spy.getCall(1).args[1]).to.eql({foo: 'bar', baz: 10})
+      expect(spy.calledWith(element, {foo: 'bar', baz: 10}, widget)).to.be.ok()
     })
 
     it('calls the passed-in block when called with one', () => {
