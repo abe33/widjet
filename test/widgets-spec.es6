@@ -176,6 +176,34 @@ describe('widgets', () => {
     })
   })
 
+  describe('that defines hooks', () => {
+    beforeEach(() => {
+      widgets.define('dummy', (element, options, widget) => {
+        widget.onActivation = sinon.spy()
+        widget.onDeactivation = sinon.spy()
+        widget.onInitialization = sinon.spy()
+        widget.onDispose = sinon.spy()
+      })
+      widgets('dummy', '.dummy', {on: 'init'})
+      widget = widgets.widgetsFor(element, 'dummy')
+    })
+
+    it('calls the initialization and activation hooks on creation', () => {
+      expect(widget.onInitialization.calledOn(widget)).to.be.ok()
+      expect(widget.onActivation.calledOn(widget)).to.be.ok()
+    })
+
+    it('calls the deactivation hooks on deactivation', () => {
+      widget.deactivate()
+      expect(widget.onDeactivation.calledOn(widget)).to.be.ok()
+    })
+
+    it('calls the dispose hooks on disposal', () => {
+      widget.dispose()
+      expect(widget.onDispose.calledOn(widget)).to.be.ok()
+    })
+  })
+
   describe('.dispose()', () => {
     it('removes the class on the target element', () => {
       widgets('dummy', '.dummy', {on: 'init'})

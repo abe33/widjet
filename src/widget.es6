@@ -10,12 +10,14 @@ export default class Widget {
   activate () {
     if (this.active) { return }
 
+    this.onActivation && this.onActivation()
     this.active = true
   }
 
   deactivate () {
     if (!this.active) { return }
 
+    this.onDeactivation && this.onDeactivation()
     this.active = false
   }
 
@@ -23,7 +25,9 @@ export default class Widget {
     if (this.initialized) { return }
 
     this.element.classList.add(this.handledClass)
-    this.disposable = this.handler(this.element, this.options)
+    const args = [this.element, this.options, this]
+    this.disposable = this.handler.apply(this, args)
+    this.onInitialization && this.onInitialization()
 
     this.initialized = true
   }
@@ -34,6 +38,7 @@ export default class Widget {
     this.element.classList.remove(this.handledClass)
 
     this.disposable && this.disposable.dispose()
+    this.onDispose && this.onDispose()
 
     delete this.element
     delete this.options
