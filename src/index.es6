@@ -47,10 +47,8 @@ export default function widgets (name, selector, options = {}, block) {
     throw new Error(`Unable to find widget '${name}'`)
   }
 
-  /*
-    The options specific to the widget registration and activation are
-    extracted from the options object.
-  */
+  // The options specific to the widget registration and activation are
+  // extracted from the options object.
   const ifCond = options.if
   const unlessCond = options.unless
   const targetFrame = options.targetFrame
@@ -74,33 +72,25 @@ export default function widgets (name, selector, options = {}, block) {
   // Events can be passed as a string with event names separated with spaces.
   if (typeof events === 'string') { events = events.split(/\s+/g) }
 
-  /*
-    The widgets instances are stored in a Hash with the DOM element they
-    target as key. The instances hashes are stored per widget type.
-  */
+  // The widgets instances are stored in a Hash with the DOM element they
+  // target as key. The instances hashes are stored per widget type.
   const instances = INSTANCES[name] || (INSTANCES[name] = new Hash())
 
-  /*
-    This method execute a test condition for the given element. The condition
-    can be either a function or a value converted to boolean.
-  */
+  // This method execute a test condition for the given element. The condition
+  // can be either a function or a value converted to boolean.
   function testCondition (condition, element) {
     return typeof condition === 'function' ? condition(element) : !!condition
   }
 
-  /*
-    The DOM elements handled by a widget will receive a handled class
-    to differenciate them from unhandled elements.
-  */
+  // The DOM elements handled by a widget will receive a handled class
+  // to differenciate them from unhandled elements.
   const handledClass = `${name}-handled`
 
-  /*
-    This method will test if an element can be handled by the current widget.
-    It will test for both the handled class presence and the widget
-    conditions. Note that if both the `if` and `unless` conditions
-    are passed in the options object they will be tested as both part
-    of a single `&&` condition.
-  */
+  // This method will test if an element can be handled by the current widget.
+  // It will test for both the handled class presence and the widget
+  // conditions. Note that if both the `if` and `unless` conditions
+  // are passed in the options object they will be tested as both part
+  // of a single `&&` condition.
   function canBeHandled (element) {
     let res = !element.classList.contains(handledClass)
     res = ifCond ? res && testCondition(ifCond, element) : res
@@ -125,10 +115,8 @@ export default function widgets (name, selector, options = {}, block) {
       }
     }
 
-    /*
-      The media handler is registered on the `resize` event of the `window`
-      object.
-    */
+    // The media handler is registered on the `resize` event of the `window`
+    // object.
     mediaHandler = function (element, widget) {
       if (!widget) { return }
 
@@ -146,10 +134,8 @@ export default function widgets (name, selector, options = {}, block) {
     })
   }
 
-  /*
-    The `handler` function is the function registered on specified event and
-    will proceed to the creation of the widgets if the conditions are met.
-  */
+  // The `handler` function is the function registered on specified event and
+  // will proceed to the creation of the widgets if the conditions are met.
   const handler = function () {
     const elements = targetDocument.querySelectorAll(selector)
 
@@ -173,11 +159,9 @@ export default function widgets (name, selector, options = {}, block) {
     })
   }
 
-  /*
-    For each event specified, the handler is registered as listener.
-    A special case is the `init` event that simply mean to trigger the
-    handler as soon a the function is called.
-  */
+  // For each event specified, the handler is registered as listener.
+  // A special case is the `init` event that simply mean to trigger the
+  // handler as soon a the function is called.
   events.forEach(function (event) {
     switch (event) {
       case 'init':
@@ -193,6 +177,14 @@ export default function widgets (name, selector, options = {}, block) {
   })
 }
 
+/**
+ * A helper function used to dispatch an event from a given `source` or from
+ * the `document` if no source is provided.
+ *
+ * @param  {HTMLElement} source the element onto which dispatch the event
+ * @param  {string} type the name of the event to dispatch
+ * @param  {Object} [properties={}] the properties of the event to dispatch
+ */
 widgets.dispatch = function dispatch (source, type, properties = {}) {
   if (typeof source === 'string') {
     properties = type || {}
@@ -232,6 +224,7 @@ widgets.define = function (name, block) { WIDGETS[name] = block }
 
 /**
  * A shorthand method to register a jQuery widget.
+ *
  * @param  {string} name the widget's name
  * @param  {string} [baseOptions={}] the base option for the jquery widget.
  *                                   It'll be used as default when creating
@@ -253,7 +246,7 @@ widgets.$define = function (name, baseOptions = {}, block) {
 }
 
 /**
- * Deletes a widget definition
+ * Deletes a widget definition.
  *
  * @param  {String} name the name of the widget to delete
  */
@@ -283,10 +276,14 @@ widgets.reset = function (...names) {
 }
 
 /**
- * [widgetsFor description]
- * @param  {[type]} element [description]
- * @param  {[type]} widget  [description]
- * @return {[type]}         [description]
+ * Returns all or a specific widget for a given `element`.
+ *
+ * If no `widget` is specified all the widgets registered for the passed-in
+ * element are returned.
+ *
+ * @param  {HTMLElement} element the element for which retrieving the widgets
+ * @param  {string} widget a name of a specific widget class to retrieve
+ * @return {Array<Widget>|Widget} the widget(s) associated to the element
  */
 widgets.widgetsFor = function (element, widget) {
   if (widget) {
@@ -301,12 +298,14 @@ widgets.widgetsFor = function (element, widget) {
 }
 
 /**
- * [subscribe description]
- * @param  {string} name      [description]
- * @param  {object} to        [description]
- * @param  {string} evt       [description]
- * @param  {function} handler [description]
- * @return {DisposableEvent}  [description]
+ * Subscribes an event listener to the specified events onto the specified
+ * target and stores a subscription so that it can be unsubscribed later.
+ *
+ * @param  {string} name the name of the event making the subscription
+ * @param  {HTMLElement} to the target element of the subscription
+ * @param  {string} evt the target event of the subscription
+ * @param  {function(e:Event):void} handler the listener of the subscription
+ * @return {DisposableEvent} a disposable object to remove the subscription
  * @private
  */
 widgets.subscribe = function (name, to, evt, handler) {
