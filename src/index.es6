@@ -282,6 +282,12 @@ widgets.reset = function (...names) {
   })
 }
 
+/**
+ * [widgetsFor description]
+ * @param  {[type]} element [description]
+ * @param  {[type]} widget  [description]
+ * @return {[type]}         [description]
+ */
 widgets.widgetsFor = function (element, widget) {
   if (widget) {
     return INSTANCES[widget].get(element)
@@ -294,6 +300,15 @@ widgets.widgetsFor = function (element, widget) {
   }
 }
 
+/**
+ * [subscribe description]
+ * @param  {string} name      [description]
+ * @param  {object} to        [description]
+ * @param  {string} evt       [description]
+ * @param  {function} handler [description]
+ * @return {DisposableEvent}  [description]
+ * @private
+ */
 widgets.subscribe = function (name, to, evt, handler) {
   SUBSCRIPTIONS[name] || (SUBSCRIPTIONS[name] = [])
   const subscription = new DisposableEvent(to, evt, handler)
@@ -306,20 +321,36 @@ widgets.subscribe = function (name, to, evt, handler) {
  * of the given `name` from the page.
  * It's the widget responsibility to clean up its dependencies during
  * the `dispose` call.
+ *
+ * @param {...string} names
  */
 widgets.release = function (...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES) }
-  names.forEach(name => INSTANCES[name].each(value => value.dispose()))
+  names.forEach(name => {
+    INSTANCES[name] && INSTANCES[name].each(value => value.dispose())
+  })
 }
 
-// Activates all the widgets instances of type `name`.
+/**
+ * Activates all the widgets instances of type `name`.
+ *
+ * @param  {...string} names [description]
+ */
 widgets.activate = function (...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES) }
-  names.forEach(name => INSTANCES[name].each(value => value.activate()))
+  names.forEach(name => {
+    INSTANCES[name] && INSTANCES[name].each(value => value.activate())
+  })
 }
 
-// Deactivates all the widgets instances of type `name`.
+/**
+ * Deactivates all the widgets instances of type `name`.
+ *
+ * @param  {...string} names [description]
+ */
 widgets.deactivate = function (...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES) }
-  names.forEach(name => INSTANCES[name].each(value => value.deactivate()))
+  names.forEach(name => {
+    INSTANCES[name] && INSTANCES[name].each(value => value.deactivate())
+  })
 }

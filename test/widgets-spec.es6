@@ -31,6 +31,10 @@ describe('widgets', () => {
     widgets.define('dummy', spy)
   })
 
+  it('raises an error when calling a widget that has not been defined', () => {
+    expect(() => widgets('foo', '.dummy', {on: 'init'})).to.throwError()
+  })
+
   describe('without any conditions', () => {
     beforeEach(() => {
       widgets('dummy', '.dummy', {on: 'custom:event'})
@@ -224,6 +228,147 @@ describe('widgets', () => {
 
       it('calls the disposable dispose method', () => {
         expect(spy.called).to.be.ok()
+      })
+    })
+  })
+
+  describe('.delete()', () => {
+    it('deletes the widgets definition', () => {
+      widgets.delete('dummy')
+      expect(() => widgets('dummy', '.dummy', {on: 'init'})).to.throwError()
+    })
+
+    describe('when there is already instances of that widget', () => {
+      it('does not disposes the instances', () => {
+        widgets('dummy', '.dummy', {on: 'init'})
+        widget = widgets.widgetsFor('dummy')
+
+        widgets.delete('dummy')
+
+        expect(widget.disposed).not.to.be.ok()
+      })
+    })
+  })
+
+  describe('.deactivate()', () => {
+    let otherWidget
+
+    beforeEach(() => {
+      widgets.define('other-dummy', () => {})
+
+      widgets('dummy', '.dummy', {on: 'init'})
+      widgets('other-dummy', '.dummy', {on: 'init'})
+      widget = widgets.widgetsFor(element, 'dummy')
+      otherWidget = widgets.widgetsFor(element, 'other-dummy')
+    })
+
+    describe('called with any name', () => {
+      it('deactivates all the instances of all widgets', () => {
+        widgets('dummy', '.dummy', {on: 'init'})
+        widgets.deactivate()
+
+        expect(widget.active).not.to.be.ok()
+        expect(otherWidget.active).not.to.be.ok()
+      })
+    })
+
+    describe('called with a single name', () => {
+      it('deactivates all the instances of the specified widget', () => {
+        widgets.deactivate('other-dummy')
+
+        expect(widget.active).to.be.ok()
+        expect(otherWidget.active).not.to.be.ok()
+      })
+    })
+
+    describe('called with several names', () => {
+      it('deactivates all the instances of the specified widgets', () => {
+        widgets.deactivate('other-dummy', 'dummy')
+
+        expect(widget.active).not.to.be.ok()
+        expect(otherWidget.active).not.to.be.ok()
+      })
+    })
+  })
+
+  describe('.activate()', () => {
+    let otherWidget
+
+    beforeEach(() => {
+      widgets.define('other-dummy', () => {})
+
+      widgets('dummy', '.dummy', {on: 'init'})
+      widgets('other-dummy', '.dummy', {on: 'init'})
+      widget = widgets.widgetsFor(element, 'dummy')
+      otherWidget = widgets.widgetsFor(element, 'other-dummy')
+
+      widgets.deactivate()
+    })
+
+    describe('called with any name', () => {
+      it('activates all the instances of all widgets', () => {
+        widgets.activate()
+
+        expect(widget.active).to.be.ok()
+        expect(otherWidget.active).to.be.ok()
+      })
+    })
+
+    describe('called with a single name', () => {
+      it('activates all the instances of the specified widget', () => {
+        widgets.activate('dummy')
+
+        expect(widget.active).to.be.ok()
+        expect(otherWidget.active).not.to.be.ok()
+      })
+    })
+
+    describe('called with several names', () => {
+      it('activates all the instances of the specified widgets', () => {
+        widgets.activate('other-dummy', 'dummy')
+
+        expect(widget.active).to.be.ok()
+        expect(otherWidget.active).to.be.ok()
+      })
+    })
+  })
+
+  describe('.release()', () => {
+    let otherWidget
+
+    beforeEach(() => {
+      widgets.define('other-dummy', () => {})
+
+      widgets('dummy', '.dummy', {on: 'init'})
+      widgets('other-dummy', '.dummy', {on: 'init'})
+      widget = widgets.widgetsFor(element, 'dummy')
+      otherWidget = widgets.widgetsFor(element, 'other-dummy')
+    })
+
+    describe('called with any name', () => {
+      it('disposes all the instances of all widgets', () => {
+        widgets.release()
+
+        expect(widget.disposed).to.be.ok()
+        expect(otherWidget.disposed).to.be.ok()
+      })
+    })
+
+    describe('called with a single name', () => {
+      it('disposes all the instances of the specified widget', () => {
+        widgets.release('dummy')
+
+        expect(widget.disposed).to.be.ok()
+        expect(otherWidget.disposed).not.to.be.ok()
+      })
+    })
+
+    describe('called with several names', () => {
+      it('disposes all the instances of the specified widgets', () => {
+        widgets.release('other-dummy', 'dummy')
+
+        expect(widget.disposed).to.be.ok()
+        expect(otherWidget.disposed).to.be.ok()
       })
     })
   })
