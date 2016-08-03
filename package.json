@@ -1,6 +1,6 @@
 {
   "name": "widjet",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A simple and lightweight widget helper for the web",
   "main": "lib/index.js",
   "scripts": {
