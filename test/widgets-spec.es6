@@ -208,6 +208,32 @@ describe('widgets', () => {
     })
   })
 
+  describe('.define()', () => {
+    let proto
+    describe('with an object instead of a function', () => {
+      beforeEach(() => {
+        proto = {
+          initialize: sinon.spy(),
+          activate: sinon.spy(),
+          deactivate: sinon.spy(),
+          dispose: sinon.spy()
+        }
+
+        widgets.delete('dummy')
+        widgets.define('dummy', proto)
+
+        widgets('dummy', '.dummy', {on: 'init'})
+
+        widget = widgets.widgetsFor(element, 'dummy')
+      })
+
+      it('calls the object methods', () => {
+        expect(proto.initialize.calledOn(widget)).to.be.ok()
+        expect(proto.activate.calledOn(widget)).to.be.ok()
+      })
+    })
+  })
+
   describe('.dispose()', () => {
     it('removes the class on the target element', () => {
       widgets('dummy', '.dummy', {on: 'init'})

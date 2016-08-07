@@ -205,10 +205,10 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
 /**
  * The `widgets.define` is used to create a new widget usable through the
  * `widgets` method. Basically, a widget is defined using a `name`, and a
- * `block` function that will be called for each DOM elements targeted by
- * the widget.
+ * either a function that will be called for each DOM elements targeted by
+ * the widget or an object that will be used to define the widget prototype.
  *
- * The `block` function should have the following signature:
+ * The function should have the following signature:
  *
  * ```js
  * function (element : HTMLElement, options : Object) : Object
@@ -217,10 +217,38 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
  * The `options` object will contains all the options passed to the `widgets`
  * method except the `on`, `if`, `unless` and `media` ones.
  *
+ *
+ * In case of an object, it should have the following structure:
+ *
+ * ```js
+ * {
+ *  initialize: function () { ... },
+ *  activate: function () { ... },
+ *  deactivate: function () { ... },
+ *  dispose: function () { ... }
+ * }
+ * ```
+ *
+ * Each functions of the object correspond to the hooks available in a widget
+ * handler function.
+ *
  * @param {string} name the widget name
- * @param {function(element:HTMLElement):void} block the widgets' block callback
+ * @param {Object|function} blockOrPrototype the widgets' block callback
+ *                                           or an object to use as the widget
+ *                                           prototype
  */
-widgets.define = function (name, block) { WIDGETS[name] = block }
+widgets.define = function (name, blockOrPrototype) {
+  if (typeof blockOrPrototype === 'function') {
+    WIDGETS[name] = blockOrPrototype
+  } else {
+    WIDGETS[name] = function (...args) {
+      this.onInitialization = blockOrPrototype.initialize
+      this.onActivation = blockOrPrototype.activate
+      this.onDeactivation = blockOrPrototype.deactivate
+      this.onDispose = blockOrPrototype.dispose
+    }
+  }
+}
 
 /**
  * A shorthand method to register a jQuery widget.
