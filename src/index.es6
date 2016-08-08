@@ -242,9 +242,9 @@ widgets.define = function (name, blockOrPrototype) {
     WIDGETS[name] = blockOrPrototype
   } else {
     WIDGETS[name] = function (...args) {
-      this.onInitialization = blockOrPrototype.initialize
-      this.onActivation = blockOrPrototype.activate
-      this.onDeactivation = blockOrPrototype.deactivate
+      this.onInitialize = blockOrPrototype.initialize
+      this.onActivate = blockOrPrototype.activate
+      this.onDeactivate = blockOrPrototype.deactivate
       this.onDispose = blockOrPrototype.dispose
     }
   }

@@ -39,9 +39,9 @@ import widgets from 'widjet'
 widgets.define('my-widget-name', (element, options = {}, widget) => {
   // We're gonna use `widget` instead of `this` to register the lifecycle hooks
   // as we're using a fat arrow function
-  widget.onInitialization = function () { console.log('initialized') }
-  widget.onActivation = function () { console.log('activated') }
-  widget.onDeactivation = function () { console.log('deactivated') }
+  widget.onInitialize = function () { console.log('initialized') }
+  widget.onActivate = function () { console.log('activated') }
+  widget.onDeactivate = function () { console.log('deactivated') }
   widget.onDispose = function () { console.log('disposed') }
 
   // ...
@@ -56,7 +56,7 @@ widgets.define('my-widget-name', (element, options = {}, widget) => {
 })
 ```
 
-In that example, the `onInitialization` hook is redundant since the definition function is executed during the widget initialization.
+In that example, the `onInitialize` hook is redundant since the definition function is executed during the widget initialization.
 
 Another way, that is more convenient if you need to define all these lifecycle hooks, is to pass an object instead of a function:
 
