@@ -85,3 +85,15 @@ widgets('my-widget-name', '.widget-target-selector', {on: 'load'})
 ```
 
 The first parameter is the name of the widget to register. The second argument is the CSS query (as supported by the `querySelector` and `querySelectorAll` methods) to match the element that will be affected by the widget. The last argument is an option object where you can specify the various conditions for the widget to apply.
+
+In the example above, the `on` option defines the events onto which the query will be performed to find elements fot this widget.
+
+You can find the complete list of options below, any options that are not consumed by the `widgets` function will be passed to the widget.
+
+|Option|Description|
+|---|---|
+|`on`| A space-separated list of events that will trigger a lookup for the widget. All events except `load` and `resize` are listened on `document`, `load` and `resize` being window's events they will be registered on the `window` object.<br/><br/>Example: `{on: 'foo bar baz'}`|
+|`if`| A predicate that will make the widget apply when it returns `true`. The function receives the target `element` as the sole argument but can completely ignores it.<br/><br/>Example: `{if: () => someCondition}`|
+|`unless`| A predicate that will make the widget apply when it returns `false`. The function receives the target `element` as the sole argument but can completely ignores it.<br/><br/>Example: `{unless: () => someCondition}`|
+|`media`| Either a boolean, a function or an object with a `min` and/or `max` properties. Contrary to the `if` and `unless` options, the `media` option will determine the activation state of the widget, given it was initialized according to the `if` and `unless` options. If an object is passed, the `min` and `max` values are tested against the window's width as generally done with CSS media queries.<br/><br/>Example: `{media: {min: 768, max: 1024}}`|
+|`targetFrame`| A selector to target a specific `iframe` in the page, this will allow a parent page to apply widgets on the content of a hosted frame, useful for editor's like that relies on frames. In the case the option is specified, all the events defined in the `on` option will be listened on the frame's `contentWindow` and `contentDocument`.<br/><br/>Example: `{targetFrame: '#frame-id'}`|
