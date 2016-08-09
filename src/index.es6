@@ -60,6 +60,7 @@ export default function widgets (name, selector, options = {}, block) {
   delete options.if
   delete options.unless
   delete options.media
+  delete options.targetFrame
 
   const targetDocument = targetFrame
     ? document.querySelector(targetFrame).contentDocument
