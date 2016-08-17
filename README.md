@@ -71,7 +71,7 @@ widgets.define('my-widget-name', {
 })
 ```
 
-The advantage of the former version is that you can benefit from the function closure for the various hooks. The latter version, on the other hand, promote a more OOP-like structure where you'll have to store on the object what you want to access in the various methods.
+The advantage of the former version is that you can benefit from the function closure for the various hooks. The latter version, on the other hand, promotes a more OOP-like structure where you'll have to store on the object what you want to access in the various methods.
 
 #### Widgets Consumption
 
@@ -84,7 +84,7 @@ import widgets from 'widjet'
 widgets('my-widget-name', '.widget-target-selector', {on: 'load'})
 ```
 
-The first parameter is the name of the widget to register. The second argument is the CSS query (as supported by the `querySelector` and `querySelectorAll` methods) to match the element that will be affected by the widget. The last argument is an option object where you can specify the various conditions for the widget to apply.
+The first parameter is the name of the widget to register. The second argument is the CSS query (as supported by the `querySelector` and `querySelectorAll` methods) to match the elements that will be affected by the widget. The last argument is an option object where you can specify the various conditions for the widget to apply.
 
 In the example above, the `on` option defines the events onto which the query will be performed to find elements fot this widget.
 
@@ -97,3 +97,7 @@ You can find the complete list of options below, any options that are not consum
 |`unless`| A predicate that will make the widget apply when it returns `false`. The function receives the target `element` as the sole argument but can completely ignores it.<br/><br/>Example: `{unless: () => someCondition}`|
 |`media`| Either a boolean, a function or an object with a `min` and/or `max` properties. Contrary to the `if` and `unless` options, the `media` option will determine the activation state of the widget, given it was initialized according to the `if` and `unless` options. If an object is passed, the `min` and `max` values are tested against the window's width as generally done with CSS media queries.<br/><br/>Example: `{media: {min: 768, max: 1024}}`|
 |`targetFrame`| A selector to target a specific `iframe` in the page, this will allow a parent page to apply widgets on the content of a hosted frame, useful for editor's like that relies on frames. In the case the option is specified, all the events defined in the `on` option will be listened on the frame's `contentWindow` and `contentDocument`.<br/><br/>Example: `{targetFrame: '#frame-id'}`|
+
+Any option that is not in the list above will be collected and passed to the widget as its options.
+
+A widget can't be applied twice on the same element. This is ensured by adding a specific class to the widget's element that marks the element as handled. When the widget is disposed, the class is removed and the element can be targeted again.
