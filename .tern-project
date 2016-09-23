@@ -4,14 +4,24 @@
     "browser"
   ],
   "plugins": {
-    "complete_strings": {},
-    "node": {},
-    "lint": {},
+    "complete_strings": {
+      "maxLength": 15
+    },
+    "node": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
     "angular": {},
-    "modules": {},
+    "modules": {
+      "dontLoad": "",
+      "load": "",
+      "modules": ""
+    },
     "es_modules": {},
     "doc_comment": {
-      "fullDocs": true
+      "fullDocs": true,
+      "strong": false
     }
   }
 }
