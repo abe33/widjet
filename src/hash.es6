@@ -11,7 +11,6 @@ export default class Hash {
   set (key, value) {
     if (this.hasKey(key)) {
       const index = this.keys.indexOf(key)
-      this.keys[index] = key
       this.values[index] = value
     } else {
       this.keys.push(key)
@@ -23,7 +22,7 @@ export default class Hash {
 
   getKey (value) { return this.keys[ this.values.indexOf(value) ] }
 
-  hasKey (key) { return this.keys.indexOf(key) > 0 }
+  hasKey (key) { return this.keys.indexOf(key) > -1 }
 
   unset (key) {
     const index = this.keys.indexOf(key)
@@ -31,9 +30,17 @@ export default class Hash {
     this.values.splice(index, 1)
   }
 
-  each (block) { this.values.forEach(block) }
+  each (block) {
+    if (!block) { return }
 
-  eachKey (block) { this.keys.forEach(block) }
+    this.values.forEach(block)
+  }
+
+  eachKey (block) {
+    if (!block) { return }
+
+    this.keys.forEach(block)
+  }
 
   eachPair (block) {
     if (!block) { return }
