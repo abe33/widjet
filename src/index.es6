@@ -252,29 +252,6 @@ widgets.define = function (name, blockOrPrototype) {
 }
 
 /**
- * A shorthand method to register a jQuery widget.
- *
- * @param  {string} name the widget's name
- * @param  {string} [baseOptions={}] the base option for the jquery widget.
- *                                   It'll be used as default when creating
- *                                   the option object on a widget invocation.
- * @param  {function($element:JQuery):void} block the widgets' block callback
- */
-widgets.$define = function (name, baseOptions = {}, block) {
-  if (typeof baseOptions === 'function') {
-    [baseOptions, block] = [{}, baseOptions]
-  }
-
-  if (!window.$.fn[name]) { throw new Error(`${name} jquery widget isn't defined`) }
-
-  WIDGETS[name] = (element, options = {}) => {
-    for (let k in baseOptions) { options[k] = options[k] || baseOptions[k] }
-    const res = window.$(element)[name](options)
-    block && block(res, options)
-  }
-}
-
-/**
  * Deletes a widget definition.
  *
  * @param  {String} name the name of the widget to delete
