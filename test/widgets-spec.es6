@@ -234,6 +234,17 @@ describe('widgets', () => {
     })
   })
 
+  describe('.widgetsFor()', () => {
+    describe('when called without a widget name', () => {
+      it('returns all the widgets for the element', () => {
+        widgets('dummy', '.dummy', {on: 'init'})
+        const elementWidgets = widgets.widgetsFor(element)
+
+        expect(elementWidgets).to.have.length(1)
+      })
+    })
+  })
+
   describe('.dispose()', () => {
     it('removes the class on the target element', () => {
       widgets('dummy', '.dummy', {on: 'init'})
