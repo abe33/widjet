@@ -2,3 +2,4 @@ node_modules
 pages
 lib
 .nyc_output
+coverage
