@@ -1,4 +1,4 @@
-## widjet [![Build Status](https://travis-ci.org/abe33/widjet.svg?branch=master)](https://travis-ci.org/abe33/widjet)
+## widjet [![Build Status](https://travis-ci.org/abe33/widjet.svg?branch=master)](https://travis-ci.org/abe33/widjet) [![codecov](https://codecov.io/gh/abe33/widjet/branch/master/graph/badge.svg)](https://codecov.io/gh/abe33/widjet)
 
 A simple and lightweight widget helper for the web.
 
