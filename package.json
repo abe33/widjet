@@ -3,6 +3,7 @@
   "version": "0.2.1",
   "description": "A simple and lightweight widget helper for the web",
   "main": "lib/index.js",
+  "jsnext:main": "src/index.es6",
   "scripts": {
     "test": "nyc mocha --timeout 5000 --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
     "lcov_report": "nyc report --reporter=lcov",
