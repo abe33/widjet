@@ -7,46 +7,69 @@ import widgets from '../src/index'
 function resizeTo (w, h) {
   window.innerWidth = w
   window.innerHeight = h
-  widgets.dispatch(window, 'resize')
+  widgets.dispatch(window, 'resize', {}, {})
 }
 
 describe('widgets', () => {
   jsdom()
 
-  let [spy, eventSpy, widget, element] = []
+  let [spy, defineSpy, eventSpy, widget, element] = []
 
   beforeEach(() => {
     widgets.reset()
 
     spy = sinon.spy()
+    defineSpy = sinon.spy(options => spy)
     eventSpy = sinon.spy()
 
     resizeTo(1024, 768)
 
-    document.body.innerHTML = '<div class="dummy"></div>'
+    document.body.innerHTML = `
+      <div class="dummy"></div>
+      <div class="dummy"></div>
+    `
+
     element = document.body.querySelector('div')
 
     document.addEventListener('dummy:handled', eventSpy)
 
-    widgets.define('dummy', spy)
+    widgets.define('dummy', defineSpy)
   })
 
   it('raises an error when calling a widget that has not been defined', () => {
     expect(() => widgets('foo', '.dummy', {on: 'init'})).to.throwError()
   })
 
-  describe('without any conditions', () => {
+  describe('without on event', () => {
     beforeEach(() => {
-      widgets('dummy', '.dummy', {on: 'custom:event'})
-
-      widgets.dispatch('custom:event')
+      widgets('dummy', '.dummy')
 
       widget = widgets.widgetsFor(element, 'dummy')
     })
 
+    it('initializes widgets on init', () => {
+      expect(widget).not.to.be(null)
+    })
+  })
+
+  describe('without any conditions', () => {
+    beforeEach(() => {
+      widgets('dummy', '.dummy', {on: 'load'})
+
+      widgets.dispatch(window, 'load')
+
+      widget = widgets.widgetsFor(element, 'dummy')
+    })
+
+    it('calls the definition function immediately', () => {
+      expect(defineSpy.calledWith({})).to.be.ok()
+      expect(defineSpy.callCount).to.eql(1)
+    })
+
     it('calls the widget method and creates a widget', () => {
       expect(spy.calledOn(widget)).to.be.ok()
-      expect(spy.calledWith(element, {}, widget)).to.be.ok()
+      expect(spy.callCount).to.eql(2)
+      expect(spy.calledWith(element, widget)).to.be.ok()
       expect(widget.element).to.be(element)
     })
 
@@ -62,14 +85,14 @@ describe('widgets', () => {
       expect(element.classList.contains('dummy-handled')).to.be.ok()
     })
 
-    it('passes any extra options to the widget function', () => {
+    it('passes any extra options to the widget definition function', () => {
       document.body.innerHTML = '<div class="dummy"></div>'
       element = document.body.querySelector('div')
 
       widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10})
       widget = widgets.widgetsFor(element, 'dummy')
-
-      expect(spy.calledWith(element, {foo: 'bar', baz: 10}, widget)).to.be.ok()
+      expect(defineSpy.calledWith({foo: 'bar', baz: 10})).to.be.ok()
+      expect(spy.calledWith(element, widget)).to.be.ok()
     })
 
     it('calls the passed-in block when called with one', () => {
@@ -116,6 +139,18 @@ describe('widgets', () => {
     describe('that returns true', () => {
       beforeEach(() => {
         widgets('dummy', '.dummy', {on: 'custom:event', unless: () => true})
+
+        widgets.dispatch('custom:event')
+      })
+
+      it('does not call the widget handler', () => {
+        expect(spy.called).not.to.be.ok()
+      })
+    })
+
+    describe('that is not a function', () => {
+      beforeEach(() => {
+        widgets('dummy', '.dummy', {on: 'custom:event', unless: true})
 
         widgets.dispatch('custom:event')
       })
@@ -182,7 +217,7 @@ describe('widgets', () => {
 
   describe('that defines hooks', () => {
     beforeEach(() => {
-      widgets.define('dummy', (element, options, widget) => {
+      widgets.define('dummy', options => (element, widget) => {
         widget.onActivate = sinon.spy()
         widget.onDeactivate = sinon.spy()
         widget.onInitialize = sinon.spy()
@@ -212,12 +247,12 @@ describe('widgets', () => {
     let proto
     describe('with an object instead of a function', () => {
       beforeEach(() => {
-        proto = {
+        proto = options => ({
           initialize: sinon.spy(),
           activate: sinon.spy(),
           deactivate: sinon.spy(),
           dispose: sinon.spy()
-        }
+        })
 
         widgets.delete('dummy')
         widgets.define('dummy', proto)
@@ -228,8 +263,8 @@ describe('widgets', () => {
       })
 
       it('calls the object methods', () => {
-        expect(proto.initialize.calledOn(widget)).to.be.ok()
-        expect(proto.activate.calledOn(widget)).to.be.ok()
+        expect(widget.onInitialize.calledOn(widget)).to.be.ok()
+        expect(widget.onActivate.calledOn(widget)).to.be.ok()
       })
     })
   })
@@ -256,7 +291,7 @@ describe('widgets', () => {
     describe('when the widget handler returns a disposable', () => {
       beforeEach(() => {
         spy = sinon.spy()
-        widgets.define('dummy', () => new Disposable(spy))
+        widgets.define('dummy', () => () => new Disposable(spy))
         widgets('dummy', '.dummy', {on: 'init'})
         widget = widgets.widgetsFor(element, 'dummy')
 
@@ -291,7 +326,7 @@ describe('widgets', () => {
     let otherWidget
 
     beforeEach(() => {
-      widgets.define('other-dummy', () => {})
+      widgets.define('other-dummy', () => () => {})
 
       widgets('dummy', '.dummy', {on: 'init'})
       widgets('other-dummy', '.dummy', {on: 'init'})
@@ -332,7 +367,7 @@ describe('widgets', () => {
     let otherWidget
 
     beforeEach(() => {
-      widgets.define('other-dummy', () => {})
+      widgets.define('other-dummy', () => () => {})
 
       widgets('dummy', '.dummy', {on: 'init'})
       widgets('other-dummy', '.dummy', {on: 'init'})
@@ -374,7 +409,7 @@ describe('widgets', () => {
     let otherWidget
 
     beforeEach(() => {
-      widgets.define('other-dummy', () => {})
+      widgets.define('other-dummy', () => () => {})
 
       widgets('dummy', '.dummy', {on: 'init'})
       widgets('other-dummy', '.dummy', {on: 'init'})

@@ -62,6 +62,9 @@ export default function widgets (name, selector, options = {}, block) {
   delete options.media
   delete options.targetFrame
 
+  const define = WIDGETS[name]
+  const elementHandle = define(options)
+
   const targetDocument = targetFrame
     ? document.querySelector(targetFrame).contentDocument
     : document
@@ -144,7 +147,7 @@ export default function widgets (name, selector, options = {}, block) {
       if (!canBeHandled(element)) { return }
 
       const widget = new Widget(
-        element, WIDGETS[name], clone(options), handledClass
+        element, elementHandle, clone(options), handledClass
       )
 
       widget.init()
@@ -239,16 +242,7 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
  *                                           prototype
  */
 widgets.define = function (name, blockOrPrototype) {
-  if (typeof blockOrPrototype === 'function') {
-    WIDGETS[name] = blockOrPrototype
-  } else {
-    WIDGETS[name] = function (...args) {
-      this.onInitialize = blockOrPrototype.initialize
-      this.onActivate = blockOrPrototype.activate
-      this.onDeactivate = blockOrPrototype.deactivate
-      this.onDispose = blockOrPrototype.dispose
-    }
-  }
+  WIDGETS[name] = blockOrPrototype
 }
 
 /**
