@@ -208,19 +208,24 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
 
 /**
  * The `widgets.define` is used to create a new widget usable through the
- * `widgets` method. Basically, a widget is defined using a `name`, and a
- * either a function that will be called for each DOM elements targeted by
- * the widget or an object that will be used to define the widget prototype.
+ * `widgets` method. Basically, a widget is defined using a `name`, and
+ * a definition function that either returns another function or an object.
  *
- * The function should have the following signature:
+ * The definition function should have the following signature:
  *
  * ```js
- * function (element : HTMLElement, options : Object) : Object
+ * function (options:Object):function|object
  * ```
  *
  * The `options` object will contains all the options passed to the `widgets`
  * method except the `on`, `if`, `unless` and `media` ones.
  *
+ * If the definition function is returning a function, the function should have
+ * the following signature:
+ *
+ * ```js
+ * function (element:HTMLElement, widget:Widget):Disposable
+ * ```
  *
  * In case of an object, it should have the following structure:
  *

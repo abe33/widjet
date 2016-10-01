@@ -16,8 +16,8 @@ The simplest example of how to define and use a widget is as follow:
 // Imports the widjet module
 import widgets from 'widjet'
 
-// Defines a simple widget that adds a class to the element it recieves
-widgets.define('my-widget-name', (element) => {
+// Defines a simple widget that adds a class to the element it receives
+widgets.define('my-widget-name', options => element => {
   element.classList.add('my-widget')
 })
 
@@ -27,16 +27,17 @@ widgets('my-widget-name', '.widget-target-selector', {on: 'load'})
 
 #### Widgets Definition
 
-As seen above, a basic widget's definition is pretty straigtforward, but there's more to it than just a name and a function.
+In the example above the first function is called the definition function, it's called on every use of the widget through the `widgets` function and it receives the options defined at that moment. It can either returns a function or an object.
 
-A widget's definition function will receive two more arguments: `options` and `widget` which hold respectively the options passed to the `widgets()` call and the `Widget` instance created for the target element. When called the function `this` object will refer to the `Widget` instance.
+The second function, returned by the definition function, is called the element handling function and will be called for every elements matched by the selector.
+This function will receive two arguments, the target `element` and the `widget` instance created for the target element. When called the function `this` object will refer to the `Widget` instance.
 
-Inside the definition function, you can registers hooks for the widget lifecycle.
+Inside the element handling function, you can register hooks for the widget lifecycle.
 
 ```js
 import widgets from 'widjet'
 
-widgets.define('my-widget-name', (element, options = {}, widget) => {
+widgets.define('my-widget-name', options => (element, widget) => {
   // We're gonna use `widget` instead of `this` to register the lifecycle hooks
   // as we're using a fat arrow function
   widget.onInitialize = function () { console.log('initialized') }
@@ -58,12 +59,12 @@ widgets.define('my-widget-name', (element, options = {}, widget) => {
 
 In that example, the `onInitialize` hook is redundant since the definition function is executed during the widget initialization.
 
-Another way, that is more convenient if you need to define all these lifecycle hooks, is to pass an object instead of a function:
+Another way, that is more convenient if you need to define all these lifecycle hooks, is to returns an object instead of a function in the definition function:
 
 ```js
 import widgets from 'widjet'
 
-widgets.define('my-widget-name', {
+widgets.define('my-widget-name', options => {
   initialize: function () { console.log('initialized') },
   activate: function () { console.log('activated') },
   deactivate: function () { console.log('deactivated') },
