@@ -53,6 +53,20 @@ describe('widgets', () => {
     })
   })
 
+  describe('with an on event array', () => {
+    beforeEach(() => {
+      widgets('dummy', '.dummy', {on: ['load', 'resize']})
+
+      widgets.dispatch(window, 'load')
+
+      widget = widgets.widgetsFor(element, 'dummy')
+    })
+
+    it('initializes widgets on init', () => {
+      expect(widget).not.to.be(null)
+    })
+  })
+
   describe('without any conditions', () => {
     beforeEach(() => {
       widgets('dummy', '.dummy', {on: 'load'})
@@ -202,17 +216,66 @@ describe('widgets', () => {
         widget = widgets.widgetsFor(element, 'dummy')
       })
 
-      it('does not activate the widget', () => {
+      it('activates the widget', () => {
         expect(widget.active).to.be.ok()
       })
 
-      describe('when the window is resized so that the condition is matched', () => {
-        it('now activates the widget', () => {
+      describe('when the window is resized so that the condition is no longer matched', () => {
+        it('now deactivates the widget', () => {
           resizeTo(500, 1024)
 
           expect(widget.active).not.to.be.ok()
         })
       })
+    })
+
+    describe('that is a boolean value', () => {
+      beforeEach(() => {
+        widgets('dummy', '.dummy', {on: 'init', media: true})
+
+        widget = widgets.widgetsFor(element, 'dummy')
+      })
+
+      it('activates the widget', () => {
+        expect(widget.active).to.be.ok()
+      })
+    })
+
+    describe('that is a function', () => {
+      beforeEach(() => {
+        widgets('dummy', '.dummy', {on: 'init', media: () => true})
+
+        widget = widgets.widgetsFor(element, 'dummy')
+      })
+
+      it('activates the widget', () => {
+        expect(widget.active).to.be.ok()
+      })
+    })
+  })
+
+  describe('with a target frame', () => {
+    let frame
+    beforeEach(() => {
+      setPageContent(`
+        <iframe id='frame'></iframe>
+      `)
+
+      frame = getTestRoot().querySelector('iframe')
+      frame.contentDocument.body.innerHTML = `
+        <div class="dummy"></div>
+        <div class="dummy"></div>
+      `
+
+      element = frame.contentDocument.querySelector('div')
+
+      widgets('dummy', '.dummy', {on: 'init', targetFrame: '#frame'})
+
+      widget = widgets.widgetsFor(element, 'dummy')
+    })
+
+    it('operates in the specified frame', () => {
+      expect(widget).not.to.be(null)
     })
   })
 
@@ -442,6 +505,60 @@ describe('widgets', () => {
 
         expect(widget.disposed).to.be.ok()
         expect(otherWidget.disposed).to.be.ok()
+      })
+    })
+  })
+
+  describe('.dispatch()', () => {
+    it('uses the dispatchEvent method when available', () => {
+      spy = sinon.spy()
+      document.addEventListener('foo', spy)
+
+      widgets.dispatch('foo')
+
+      expect(spy.called).to.be.ok()
+    })
+
+    it('uses the fireEvent method when available', () => {
+      const source = {
+        fireEvent: sinon.spy()
+      }
+      widgets.dispatch(source, 'foo')
+
+      expect(source.fireEvent.calledWith('onfoo')).to.be.ok()
+    })
+
+    it('logs that no event method is available', () => {
+      const source = {}
+      const safeLog = console.log
+      sinon.stub(console, 'log')
+      widgets.dispatch(source, 'foo')
+
+      expect(console.log.called).to.be.ok()
+      console.log = safeLog
+    })
+  })
+
+  describe('.reset()', () => {
+    beforeEach(() => {
+      widgets.define('dummy2', (options) => (element) => {})
+    })
+
+    describe('without a name', () => {
+      it('removes every widgets defined', () => {
+        widgets.reset()
+
+        expect(widgets.defined('dummy')).not.to.be.ok()
+        expect(widgets.defined('dummy2')).not.to.be.ok()
+      })
+    })
+
+    describe('with a name', () => {
+      it('removes the widget defined with the specified name', () => {
+        widgets.reset('dummy')
+
+        expect(widgets.defined('dummy')).not.to.be.ok()
+        expect(widgets.defined('dummy2')).to.be.ok()
       })
     })
   })

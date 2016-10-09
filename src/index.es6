@@ -109,7 +109,7 @@ export default function widgets (name, selector, options = {}, block) {
     // The media condition can be either a boolean value, a function, or,
     // to simply the setup, an object with `min` and `max` property containing
     // the minimal and maximal window width where the widget is activated.
-    if (typeof mediaCondition === 'object') {
+    if (mediaCondition instanceof Object) {
       const {min, max} = mediaCondition
       mediaCondition = function () {
         let res = true
@@ -122,8 +122,6 @@ export default function widgets (name, selector, options = {}, block) {
     // The media handler is registered on the `resize` event of the `window`
     // object.
     mediaHandler = function (element, widget) {
-      if (!widget) { return }
-
       const conditionMatched = testCondition(mediaCondition, element)
 
       if (conditionMatched && !widget.active) {
@@ -199,10 +197,10 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
   const event = domEvent(type, properties)
   if (source.dispatchEvent) {
     source.dispatchEvent(event)
+  } else if (source.fireEvent) {
+    source.fireEvent('on' + event.type, event)
   } else {
-    if (console && console.log) {
-      console.log('HTMLElement::dispatchEvent is not available on this platform. Unable to dispatch custom events on DOM nodes.')
-    }
+    console && console.log && console.log('HTMLElement::dispatchEvent is not available on this platform. Unable to dispatch custom events on DOM nodes.')
   }
 }
 
@@ -251,6 +249,15 @@ widgets.define = function (name, blockOrPrototype) {
 }
 
 /**
+ * Returns whether a widget is currently defined.
+ * @param  {string} name the widget name
+ * @return {boolean} whether the widget is defined or not
+ */
+widgets.defined = function (name) {
+  return WIDGETS[name] != null
+}
+
+/**
  * Deletes a widget definition.
  *
  * @param  {String} name the name of the widget to delete
@@ -271,11 +278,11 @@ widgets.delete = function (name) {
  * @param {...string} names the names of the wigets to delete
  */
 widgets.reset = function (...names) {
-  if (names.length === 0) { names = Object.keys(INSTANCES) }
+  if (names.length === 0) { names = Object.keys(WIDGETS) }
 
   names.forEach(name => {
     widgets.delete(name)
-    INSTANCES[name].clear()
+    INSTANCES[name] && INSTANCES[name].clear()
     delete INSTANCES[name]
   })
 }
