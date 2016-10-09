@@ -11,9 +11,15 @@
     "babel": "babel src --out-dir lib",
     "standard": "standard src/*.es6 test/*.es6",
     "esdoc": "esdoc -c esdoc.json",
-    "install": "npm run babel"
+    "install": "npm run babel",
+    "start": "widjet-test-server test/**/*.es6"
   },
-  "keywords": ["widgets", "widget", "web", "widjet"],
+  "keywords": [
+    "widgets",
+    "widget",
+    "web",
+    "widjet"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/abe33/widjet.git"
@@ -25,6 +31,7 @@
   "devDependencies": {
     "babel-eslint": "^4.1.6",
     "babel-register": "^6.3.13",
+    "codecov": "^1.0.0",
     "esdoc": "^0.4.0",
     "expect.js": "^0.3.1",
     "mocha": "^2.3.4",
@@ -32,7 +39,7 @@
     "nyc": "^8.3.0",
     "sinon": "^1.17.4",
     "standard": "^5.4.1",
-    "codecov": "^1.0.0"
+    "widjet-test-utils": "^1.1.0"
   },
   "dependencies": {
     "babel-cli": "^6.3.17",

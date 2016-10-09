@@ -1,0 +1,16 @@
+{
+  "rollup": {
+    "globals": {
+      "expect.js": "expect",
+      "sinon": "sinon"
+    },
+    "external": [
+      "expect.js",
+      "sinon"
+    ]
+  },
+  "scripts": [
+    "https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"
+  ]
+}

@@ -2,6 +2,7 @@ import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 import sinon from 'sinon'
 import {Disposable} from 'widjet-disposables'
+import {setPageContent, getTestRoot} from 'widjet-test-utils/dom'
 import widgets from '../src/index'
 
 function resizeTo (w, h) {
@@ -24,12 +25,12 @@ describe('widgets', () => {
 
     resizeTo(1024, 768)
 
-    document.body.innerHTML = `
+    setPageContent(`
       <div class="dummy"></div>
       <div class="dummy"></div>
-    `
+    `)
 
-    element = document.body.querySelector('div')
+    element = getTestRoot().querySelector('div')
 
     document.addEventListener('dummy:handled', eventSpy)
 
@@ -86,8 +87,8 @@ describe('widgets', () => {
     })
 
     it('passes any extra options to the widget definition function', () => {
-      document.body.innerHTML = '<div class="dummy"></div>'
-      element = document.body.querySelector('div')
+      setPageContent('<div class="dummy"></div>')
+      element = getTestRoot().querySelector('div')
 
       widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10})
       widget = widgets.widgetsFor(element, 'dummy')
@@ -98,8 +99,8 @@ describe('widgets', () => {
     it('calls the passed-in block when called with one', () => {
       spy = sinon.spy()
 
-      document.body.innerHTML = '<div class="dummy"></div>'
-      element = document.body.querySelector('div')
+      setPageContent('<div class="dummy"></div>')
+      element = getTestRoot().querySelector('div')
 
       widgets('dummy', '.dummy', {on: 'init', foo: 'bar', baz: 10}, spy)
 
