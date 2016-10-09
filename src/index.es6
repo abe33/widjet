@@ -1,4 +1,4 @@
-import {domEvent, clone} from 'widjet-utils'
+import {domEvent, clone, asArray} from 'widjet-utils'
 import {DisposableEvent} from 'widjet-disposables'
 import Hash from './hash'
 import Widget from './widget'
@@ -143,7 +143,7 @@ export default function widgets (name, selector, options = {}, block) {
   const handler = function () {
     const elements = targetDocument.querySelectorAll(selector)
 
-    Array.prototype.forEach.call(elements, function (element) {
+    asArray(elements).forEach((element) => {
       if (!canBeHandled(element)) { return }
 
       const widget = new Widget(
@@ -292,7 +292,7 @@ widgets.reset = function (...names) {
  */
 widgets.widgetsFor = function (element, widget) {
   if (widget) {
-    return INSTANCES[widget].get(element)
+    return INSTANCES[widget] && INSTANCES[widget].get(element)
   } else {
     return Object.keys(INSTANCES)
     .map(key => INSTANCES[key])
