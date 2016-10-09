@@ -9,8 +9,20 @@
       "sinon"
     ]
   },
-  "scripts": [
-    "https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"
-  ]
+  "scripts": {
+    "ie8": [
+      "//cdnjs.cloudflare.com/ajax/libs/ie8/0.4.1/ie8.js",
+      "/ie8-patches.js",
+      "//cdnjs.cloudflare.com/ajax/libs/native-promise-only/0.8.1/npo.js",
+      "/polyfills/object/create.es6",
+      ""
+    ],
+    "ie9": [
+      "//cdnjs.cloudflare.com/ajax/libs/native-promise-only/0.8.1/npo.js"
+    ],
+    "all" : [
+      "//cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js",
+      "//cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"
+    ]
+  }
 }
