@@ -113,8 +113,9 @@ export default function widgets (name, selector, options = {}, block) {
       const {min, max} = mediaCondition
       mediaCondition = function () {
         let res = true
-        res = min != null ? res && targetWindow.innerWidth >= min : res
-        res = max != null ? res && targetWindow.innerWidth <= max : res
+        const [width] = widgets.getScreenSize(targetWindow)
+        res = min != null ? res && width >= min : res
+        res = max != null ? res && width <= max : res
         return res
       }
     }
@@ -307,6 +308,15 @@ widgets.widgetsFor = function (element, widget) {
     .map(instances => instances.get(element))
     .reduce((memo, arr) => memo.concat(arr), [])
   }
+}
+
+/**
+ * Returns an array with the dimension of the passed-in window
+ * @param  {Window} w the target window object
+ * @return {array} the dimensions of the window
+ */
+widgets.getScreenSize = function (w) {
+  return [w.innerWidth, w.innerHeight]
 }
 
 /**

@@ -2,12 +2,14 @@ import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 import sinon from 'sinon'
 import {Disposable} from 'widjet-disposables'
-import {setPageContent, getTestRoot} from 'widjet-test-utils/src/dom.es6'
+import {setPageContent, getTestRoot} from 'widjet-test-utils/dom'
 import widgets from '../src/index'
 
+let innerWidth, innerHeight, safeGetScreenSize
+
 function resizeTo (w, h) {
-  window.innerWidth = w
-  window.innerHeight = h
+  innerWidth = w
+  innerHeight = h
   widgets.dispatch(window, 'resize', {}, {})
 }
 
@@ -17,6 +19,10 @@ describe('widgets', () => {
   let [spy, defineSpy, eventSpy, widget, element] = []
 
   beforeEach(() => {
+    safeGetScreenSize = widgets.getScreenSize
+    widgets.getScreenSize = function () {
+      return [innerWidth, innerHeight]
+    }
     widgets.reset()
 
     spy = sinon.spy()
@@ -35,6 +41,10 @@ describe('widgets', () => {
     document.addEventListener('dummy:handled', eventSpy)
 
     widgets.define('dummy', defineSpy)
+  })
+
+  afterEach(() => {
+    widgets.getScreenSize = safeGetScreenSize
   })
 
   it('raises an error when calling a widget that has not been defined', () => {
@@ -255,21 +265,21 @@ describe('widgets', () => {
   })
 
   describe('with a target frame', () => {
-    let frame
+    let targetFrame
     beforeEach(() => {
       setPageContent(`
-        <iframe id='frame'></iframe>
+        <iframe class='target-frame'></iframe>
       `)
 
-      frame = getTestRoot().querySelector('iframe')
-      frame.contentDocument.body.innerHTML = `
+      targetFrame = getTestRoot().querySelector('iframe')
+      targetFrame.contentDocument.body.innerHTML = `
         <div class="dummy"></div>
         <div class="dummy"></div>
       `
 
-      element = frame.contentDocument.querySelector('div')
+      element = targetFrame.contentDocument.querySelector('div')
 
-      widgets('dummy', '.dummy', {on: 'init', targetFrame: '#frame'})
+      widgets('dummy', '.dummy', {on: 'init', targetFrame: '.target-frame'})
 
       widget = widgets.widgetsFor(element, 'dummy')
     })
@@ -560,6 +570,14 @@ describe('widgets', () => {
         expect(widgets.defined('dummy')).not.to.be.ok()
         expect(widgets.defined('dummy2')).to.be.ok()
       })
+    })
+  })
+
+  describe('.getScreenSize()', () => {
+    it('returns the window dimensions', () => {
+      expect(safeGetScreenSize(window)).to.eql([
+        window.innerWidth, window.innerHeight
+      ])
     })
   })
 })
