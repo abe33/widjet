@@ -537,16 +537,6 @@ describe('widgets', () => {
 
       expect(source.fireEvent.calledWith('onfoo')).to.be.ok()
     })
-
-    it('logs that no event method is available', () => {
-      const source = {}
-      const safeLog = console.log
-      sinon.stub(console, 'log')
-      widgets.dispatch(source, 'foo')
-
-      expect(console.log.called).to.be.ok()
-      console.log = safeLog
-    })
   })
 
   describe('.reset()', () => {

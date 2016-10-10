@@ -200,8 +200,6 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
     source.dispatchEvent(event)
   } else if (source.fireEvent) {
     source.fireEvent('on' + event.type, event)
-  } else {
-    console && console.log && console.log('HTMLElement::dispatchEvent is not available on this platform. Unable to dispatch custom events on DOM nodes.')
   }
 }
 
