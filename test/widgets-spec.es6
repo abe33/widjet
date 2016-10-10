@@ -2,7 +2,7 @@ import expect from 'expect.js'
 import jsdom from 'mocha-jsdom'
 import sinon from 'sinon'
 import {Disposable} from 'widjet-disposables'
-import {setPageContent, getTestRoot} from 'widjet-test-utils/dom'
+import {setPageContent, getTestRoot} from 'widjet-test-utils/src/dom.es6'
 import widgets from '../src/index'
 
 function resizeTo (w, h) {
