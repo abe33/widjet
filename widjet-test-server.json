@@ -1,28 +1,12 @@
 {
-  "rollup": {
-    "globals": {
-      "expect.js": "expect",
-      "sinon": "sinon"
-    },
-    "external": [
-      "expect.js",
-      "sinon"
-    ]
-  },
   "scripts": {
     "ie8": [
-      "//cdnjs.cloudflare.com/ajax/libs/ie8/0.4.1/ie8.js",
-      "/ie8-patches.js",
-      "//cdnjs.cloudflare.com/ajax/libs/native-promise-only/0.8.1/npo.js",
       "/polyfills/object/create.es6",
-      ""
+      "/polyfills/object/keys.es6",
+      "//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js"
     ],
     "ie9": [
-      "//cdnjs.cloudflare.com/ajax/libs/native-promise-only/0.8.1/npo.js"
-    ],
-    "all" : [
-      "//cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js",
-      "//cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"
+      "//cdnjs.cloudflare.com/ajax/libs/classlist/2014.01.31/classList.min.js"
     ]
   }
 }
