@@ -198,7 +198,7 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
   const event = domEvent(type, properties)
   if (source.dispatchEvent) {
     source.dispatchEvent(event)
-  } else if (source.fireEvent) {
+  } else {
     source.fireEvent('on' + event.type, event)
   }
 }
