@@ -111,7 +111,7 @@ export default function widgets (name, selector, options = {}, block) {
     // the minimal and maximal window width where the widget is activated.
     if (mediaCondition instanceof Object) {
       const {min, max} = mediaCondition
-      mediaCondition = function () {
+      mediaCondition = function __mediaCondition () {
         let res = true
         const [width] = widgets.getScreenSize(targetWindow)
         res = min != null ? res && width >= min : res
