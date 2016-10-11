@@ -268,18 +268,24 @@ describe('widgets', () => {
     let targetFrame
     beforeEach(() => {
       setPageContent(`
-        <iframe class='target-frame'></iframe>
+        <iframe id='target-frame' width='100px' height='100px'></iframe>
       `)
 
       targetFrame = getTestRoot().querySelector('iframe')
-      targetFrame.contentDocument.body.innerHTML = `
+
+      const doc = targetFrame.contentDocument ||
+                  targetFrame.contentWindow.document
+
+      doc.innerHTML = `
+      <body>
         <div class="dummy"></div>
         <div class="dummy"></div>
+      </body>
       `
 
-      element = targetFrame.contentDocument.querySelector('div')
+      element = doc.querySelector('div')
 
-      widgets('dummy', '.dummy', {on: 'init', targetFrame: '.target-frame'})
+      widgets('dummy', '.dummy', {on: 'init', targetFrame: '#target-frame'})
 
       widget = widgets.widgetsFor(element, 'dummy')
     })
