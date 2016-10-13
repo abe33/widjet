@@ -11,7 +11,7 @@
     "babel": "babel src --out-dir lib",
     "standard": "standard src/*.es6 test/*.es6",
     "esdoc": "esdoc -c esdoc.json",
-    "install": "npm run babel",
+    "prepublish": "npm run babel",
     "start": "widjet-test-server test/**/*.es6"
   },
   "keywords": [
