@@ -29,7 +29,7 @@
   "author": "Cédric Néhémie <cedric.nehemie@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "babel-eslint": "^4.1.6",
+    "babel-eslint": "^7.0.0",
     "babel-register": "^6.3.13",
     "codecov": "^1.0.0",
     "esdoc": "^0.4.0",
