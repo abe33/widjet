@@ -46,7 +46,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-plugin-transform-es3-member-expression-literals": "^6.8.0",
     "babel-plugin-transform-es3-property-literals": "^6.8.0",
-    "widjet-utils": "^0.3.3",
+    "widjet-utils": "^0.6.0",
     "widjet-disposables": "^0.1.7"
   },
   "standard": {
