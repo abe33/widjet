@@ -1,6 +1,6 @@
 {
   "name": "widjet",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple and lightweight widget helper for the web",
   "main": "lib/index.js",
   "jsnext:main": "src/index.es6",
