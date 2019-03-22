@@ -1,24 +1,24 @@
-import {domEvent, clone, asArray} from 'widjet-utils'
-import {DisposableEvent} from 'widjet-disposables'
-import Hash from './hash'
-import Widget from './widget'
+import {domEvent, clone, asArray} from 'widjet-utils';
+import {DisposableEvent} from 'widjet-disposables';
+import Hash from './hash';
+import Widget from './widget';
 
 /**
  * The `WIDGETS` object stores all the registered widget factories.
  */
-const WIDGETS = {}
+const WIDGETS = {};
 
 /**
  * The `INSTANCES` object stores the returned instances of the various widgets,
  * stored by widget type and then mapped with their target DOM element as key.
  */
-const INSTANCES = {}
+const INSTANCES = {};
 
 /**
  * The `SUBSCRIPTIONS` object stores all the subscriptions object created
  * through the `widgets.subscribe` function.
  */
-const SUBSCRIPTIONS = {}
+const SUBSCRIPTIONS = {};
 
 /**
  * The `widgets` function is both the main module and the function
@@ -42,64 +42,64 @@ const SUBSCRIPTIONS = {}
  *                                              at which the widget will apply
  * @param {function(el:HTMLElement):void} [block]
  */
-export default function widgets (name, selector, options = {}, block) {
+export default function widgets(name, selector, options = {}, block) {
   if (WIDGETS[name] == null) {
-    throw new Error(`Unable to find widget '${name}'`)
+    throw new Error(`Unable to find widget '${name}'`);
   }
 
   // The options specific to the widget registration and activation are
   // extracted from the options object.
-  const ifCond = options.if
-  const unlessCond = options.unless
-  const targetFrame = options.targetFrame
-  let events = options.on || 'init'
-  let mediaCondition = options.media
-  let mediaHandler
+  const ifCond = options.if;
+  const unlessCond = options.unless;
+  const targetFrame = options.targetFrame;
+  let events = options.on || 'init';
+  let mediaCondition = options.media;
+  let mediaHandler;
 
-  delete options.on
-  delete options.if
-  delete options.unless
-  delete options.media
-  delete options.targetFrame
+  delete options.on;
+  delete options.if;
+  delete options.unless;
+  delete options.media;
+  delete options.targetFrame;
 
-  const define = WIDGETS[name]
-  const elementHandle = define(options)
+  const define = WIDGETS[name];
+  const elementHandle = define(options);
 
   const targetDocument = targetFrame
     ? document.querySelector(targetFrame).contentDocument
-    : document
+    : document;
 
   const targetWindow = targetFrame
     ? document.querySelector(targetFrame).contentWindow
-    : window
+    : window;
 
   // Events can be passed as a string with event names separated with spaces.
-  if (typeof events === 'string') { events = events.split(/\s+/g) }
+  if (typeof events === 'string') { events = events.split(/\s+/g); }
 
   // The widgets instances are stored in a Hash with the DOM element they
   // target as key. The instances hashes are stored per widget type.
-  const instances = INSTANCES[name] || (INSTANCES[name] = new Hash())
+  const instances = INSTANCES[name] || (INSTANCES[name] = new Hash());
 
   // This method execute a test condition for the given element. The condition
   // can be either a function or a value converted to boolean.
-  function testCondition (condition, element) {
-    return typeof condition === 'function' ? condition(element) : !!condition
+  function testCondition(condition, element) {
+    return typeof condition === 'function' ? condition(element) : !!condition;
   }
 
   // The DOM elements handled by a widget will receive a handled class
   // to differenciate them from unhandled elements.
-  const handledClass = `${name}-handled`
+  const handledClass = `${name}-handled`;
 
   // This method will test if an element can be handled by the current widget.
   // It will test for both the handled class presence and the widget
   // conditions. Note that if both the `if` and `unless` conditions
   // are passed in the options object they will be tested as both part
   // of a single `&&` condition.
-  function canBeHandled (element) {
-    let res = !element.classList.contains(handledClass)
-    res = ifCond ? res && testCondition(ifCond, element) : res
-    res = unlessCond ? res && !testCondition(unlessCond, element) : res
-    return res
+  function canBeHandled(element) {
+    let res = !element.classList.contains(handledClass);
+    res = ifCond ? res && testCondition(ifCond, element) : res;
+    res = unlessCond ? res && !testCondition(unlessCond, element) : res;
+    return res;
   }
 
   // If a media condition have been specified, the widget activation will be
@@ -110,74 +110,74 @@ export default function widgets (name, selector, options = {}, block) {
     // to simply the setup, an object with `min` and `max` property containing
     // the minimal and maximal window width where the widget is activated.
     if (mediaCondition instanceof Object) {
-      const {min, max} = mediaCondition
-      mediaCondition = function __mediaCondition () {
-        let res = true
-        const [width] = widgets.getScreenSize(targetWindow)
-        res = min != null ? res && width >= min : res
-        res = max != null ? res && width <= max : res
-        return res
-      }
+      const {min, max} = mediaCondition;
+      mediaCondition = function __mediaCondition() {
+        let res = true;
+        const [width] = widgets.getScreenSize(targetWindow);
+        res = min != null ? res && width >= min : res;
+        res = max != null ? res && width <= max : res;
+        return res;
+      };
     }
 
     // The media handler is registered on the `resize` event of the `window`
     // object.
-    mediaHandler = function (element, widget) {
-      const conditionMatched = testCondition(mediaCondition, element)
+    mediaHandler = function(element, widget) {
+      const conditionMatched = testCondition(mediaCondition, element);
 
       if (conditionMatched && !widget.active) {
-        widget.activate()
+        widget.activate();
       } else if (!conditionMatched && widget.active) {
-        widget.deactivate()
+        widget.deactivate();
       }
-    }
+    };
 
     widgets.subscribe(name, targetWindow, 'resize', () => {
-      instances.eachPair((element, widget) => mediaHandler(element, widget))
-    })
+      instances.eachPair((element, widget) => mediaHandler(element, widget));
+    });
   }
 
   // The `handler` function is the function registered on specified event and
   // will proceed to the creation of the widgets if the conditions are met.
-  const handler = function () {
-    const elements = targetDocument.querySelectorAll(selector)
+  const handler = function() {
+    const elements = targetDocument.querySelectorAll(selector);
 
     asArray(elements).forEach((element) => {
-      if (!canBeHandled(element)) { return }
+      if (!canBeHandled(element)) { return; }
 
       const widget = new Widget(
         element, elementHandle, clone(options), handledClass
-      )
+      );
 
-      widget.init()
+      widget.init();
 
-      instances.set(element, widget)
+      instances.set(element, widget);
 
       // The widgets activation state are resolved at creation
-      mediaCondition ? mediaHandler(element, widget) : widget.activate()
+      mediaCondition ? mediaHandler(element, widget) : widget.activate();
 
-      widgets.dispatch(`${name}:handled`, {element, widget})
+      widgets.dispatch(`${name}:handled`, {element, widget});
 
-      block && block.call(element, element, widget)
-    })
-  }
+      block && block.call(element, element, widget);
+    });
+  };
 
   // For each event specified, the handler is registered as listener.
   // A special case is the `init` event that simply mean to trigger the
   // handler as soon a the function is called.
-  events.forEach(function (event) {
+  events.forEach(function(event) {
     switch (event) {
       case 'init':
-        handler()
-        break
+        handler();
+        break;
       case 'load':
       case 'resize':
-        widgets.subscribe(name, targetWindow, event, handler)
-        break
+        widgets.subscribe(name, targetWindow, event, handler);
+        break;
       default:
-        widgets.subscribe(name, targetDocument, event, handler)
+        widgets.subscribe(name, targetDocument, event, handler);
     }
-  })
+  });
 }
 
 /**
@@ -188,20 +188,20 @@ export default function widgets (name, selector, options = {}, block) {
  * @param  {string} type the name of the event to dispatch
  * @param  {Object} [properties={}] the properties of the event to dispatch
  */
-widgets.dispatch = function dispatch (source, type, properties = {}) {
+widgets.dispatch = function dispatch(source, type, properties = {}) {
   if (typeof source === 'string') {
-    properties = type || {}
-    type = source
-    source = document
+    properties = type || {};
+    type = source;
+    source = document;
   }
 
-  const event = domEvent(type, properties)
+  const event = domEvent(type, properties);
   if (source.dispatchEvent) {
-    source.dispatchEvent(event)
+    source.dispatchEvent(event);
   } else {
-    source.fireEvent('on' + event.type, event)
+    source.fireEvent('on' + event.type, event);
   }
-}
+};
 
 /**
  * The `widgets.define` is used to create a new widget usable through the
@@ -243,31 +243,31 @@ widgets.dispatch = function dispatch (source, type, properties = {}) {
  *                                           or an object to use as the widget
  *                                           prototype
  */
-widgets.define = function (name, blockOrPrototype) {
-  WIDGETS[name] = blockOrPrototype
-}
+widgets.define = function(name, blockOrPrototype) {
+  WIDGETS[name] = blockOrPrototype;
+};
 
 /**
  * Returns whether a widget is currently defined.
  * @param  {string} name the widget name
  * @return {boolean} whether the widget is defined or not
  */
-widgets.defined = function (name) {
-  return WIDGETS[name] != null
-}
+widgets.defined = function(name) {
+  return WIDGETS[name] != null;
+};
 
 /**
  * Deletes a widget definition.
  *
  * @param  {String} name the name of the widget to delete
  */
-widgets.delete = function (name) {
+widgets.delete = function(name) {
   if (SUBSCRIPTIONS[name]) {
-    SUBSCRIPTIONS[name].forEach(subscription => subscription.dispose())
+    SUBSCRIPTIONS[name].forEach(subscription => subscription.dispose());
   }
-  widgets.release(name)
-  delete WIDGETS[name]
-}
+  widgets.release(name);
+  delete WIDGETS[name];
+};
 
 /**
  * Resets parts of all of widgets by deleting their definitions
@@ -276,15 +276,15 @@ widgets.delete = function (name) {
  *
  * @param {...string} names the names of the wigets to delete
  */
-widgets.reset = function (...names) {
-  if (names.length === 0) { names = Object.keys(WIDGETS) }
+widgets.reset = function(...names) {
+  if (names.length === 0) { names = Object.keys(WIDGETS); }
 
   names.forEach(name => {
-    widgets.delete(name)
-    INSTANCES[name] && INSTANCES[name].clear()
-    delete INSTANCES[name]
-  })
-}
+    widgets.delete(name);
+    INSTANCES[name] && INSTANCES[name].clear();
+    delete INSTANCES[name];
+  });
+};
 
 /**
  * Returns all or a specific widget for a given `element`.
@@ -296,26 +296,26 @@ widgets.reset = function (...names) {
  * @param  {string} widget a name of a specific widget class to retrieve
  * @return {Array<Widget>|Widget} the widget(s) associated to the element
  */
-widgets.widgetsFor = function (element, widget) {
+widgets.widgetsFor = function(element, widget) {
   if (widget) {
-    return INSTANCES[widget] && INSTANCES[widget].get(element)
+    return INSTANCES[widget] && INSTANCES[widget].get(element);
   } else {
     return Object.keys(INSTANCES)
     .map(key => INSTANCES[key])
     .filter(instances => instances.hasKey(element))
     .map(instances => instances.get(element))
-    .reduce((memo, arr) => memo.concat(arr), [])
+    .reduce((memo, arr) => memo.concat(arr), []);
   }
-}
+};
 
 /**
  * Returns an array with the dimension of the passed-in window
  * @param  {Window} w the target window object
  * @return {array} the dimensions of the window
  */
-widgets.getScreenSize = function (w) {
-  return [w.innerWidth, w.innerHeight]
-}
+widgets.getScreenSize = function(w) {
+  return [w.innerWidth, w.innerHeight];
+};
 
 /**
  * Subscribes an event listener to the specified events onto the specified
@@ -328,12 +328,12 @@ widgets.getScreenSize = function (w) {
  * @return {DisposableEvent} a disposable object to remove the subscription
  * @private
  */
-widgets.subscribe = function (name, to, evt, handler) {
-  SUBSCRIPTIONS[name] || (SUBSCRIPTIONS[name] = [])
-  const subscription = new DisposableEvent(to, evt, handler)
-  SUBSCRIPTIONS[name].push(subscription)
-  return subscription
-}
+widgets.subscribe = function(name, to, evt, handler) {
+  SUBSCRIPTIONS[name] || (SUBSCRIPTIONS[name] = []);
+  const subscription = new DisposableEvent(to, evt, handler);
+  SUBSCRIPTIONS[name].push(subscription);
+  return subscription;
+};
 
 /**
  * The `widgets.release` method can be used to completely remove the widgets
@@ -343,33 +343,33 @@ widgets.subscribe = function (name, to, evt, handler) {
  *
  * @param {...string} names
  */
-widgets.release = function (...names) {
-  if (names.length === 0) { names = Object.keys(INSTANCES) }
+widgets.release = function(...names) {
+  if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.dispose())
-  })
-}
+    INSTANCES[name] && INSTANCES[name].each(value => value.dispose());
+  });
+};
 
 /**
  * Activates all the widgets instances of type `name`.
  *
  * @param  {...string} names [description]
  */
-widgets.activate = function (...names) {
-  if (names.length === 0) { names = Object.keys(INSTANCES) }
+widgets.activate = function(...names) {
+  if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.activate())
-  })
-}
+    INSTANCES[name] && INSTANCES[name].each(value => value.activate());
+  });
+};
 
 /**
  * Deactivates all the widgets instances of type `name`.
  *
  * @param  {...string} names [description]
  */
-widgets.deactivate = function (...names) {
-  if (names.length === 0) { names = Object.keys(INSTANCES) }
+widgets.deactivate = function(...names) {
+  if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.deactivate())
-  })
-}
+    INSTANCES[name] && INSTANCES[name].each(value => value.deactivate());
+  });
+};
