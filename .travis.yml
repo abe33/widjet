@@ -5,7 +5,7 @@ node_js:
   - "6"
 
 script:
-  - npm run standard
+  - npm run lint
   - npm test
 after_success:
   - npm run coverage
