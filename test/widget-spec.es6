@@ -5,7 +5,7 @@ import jsdom from 'mocha-jsdom';
 import Widget from '../src/widget';
 
 describe('Widget', () => {
-  jsdom();
+  jsdom({url: 'http://localhost/'});
 
   let widget;
 

@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "jsnext:main": "src/index.es6",
   "scripts": {
-    "test": "nyc mocha --timeout 5000 --recursive --compilers js:babel-register test/**/*.es6 test/*.es6",
+    "test": "nyc mocha --timeout 5000 --recursive test/**/*.es6 test/*.es6",
     "lcov_report": "nyc report --reporter=lcov",
     "coverage": "npm run lcov_report && codecov",
     "babel": "babel src --out-dir lib",
@@ -32,6 +32,8 @@
   "devDependencies": {
     "babel-eslint": "^7.0.0",
     "babel-register": "^6.26.0",
+    "codecov": "^1.0.0",
+    "esdoc": "^1.1.0",
     "eslint": "^3.11.1",
     "eslint-config": "^0.3.0",
     "eslint-config-fbjs": "^1.1.1",
@@ -40,13 +42,10 @@
     "eslint-plugin-jasmine": "^2.2.0",
     "eslint-plugin-prefer-object-spread": "^1.1.0",
     "eslint-plugin-react": "^5.2.2",
-    "fbjs": "^0.8.6",
-    "codecov": "^1.0.0",
-    "esdoc": "^1.1.0",
     "expect.js": "^0.3.1",
-    "jsdom": "^9.8.3",
+    "fbjs": "^0.8.6",
     "mocha": "^6.0.2",
-    "mocha-jsdom": "^1.2.0",
+    "mocha-jsdom": "^2.0.0",
     "nyc": "^13.3.0",
     "sinon": "^1.17.7",
     "widjet-test-utils": "^1.8.0"

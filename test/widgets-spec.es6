@@ -14,7 +14,7 @@ function resizeTo(w, h) {
 }
 
 describe('widgets', () => {
-  jsdom();
+  jsdom({url: 'http://localhost/'});
 
   let [spy, defineSpy, eventSpy, widget, element] = [];
 
