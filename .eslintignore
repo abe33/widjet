@@ -1,0 +1,5 @@
+node_modules
+lib
+pages
+coverage
+.nyc_output
