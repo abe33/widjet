@@ -301,10 +301,10 @@ widgets.widgetsFor = function(element, widget) {
     return INSTANCES[widget] && INSTANCES[widget].get(element);
   } else {
     return Object.keys(INSTANCES)
-    .map(key => INSTANCES[key])
-    .filter(instances => instances.hasKey(element))
-    .map(instances => instances.get(element))
-    .reduce((memo, arr) => memo.concat(arr), []);
+      .map(key => INSTANCES[key])
+      .filter(instances => instances.hasKey(element))
+      .map(instances => instances.get(element))
+      .reduce((memo, arr) => memo.concat(arr), []);
   }
 };
 
