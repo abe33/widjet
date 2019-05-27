@@ -86,17 +86,13 @@ export default function widgets(name, selector, options = {}, block) {
     return typeof condition === 'function' ? condition(element) : !!condition;
   }
 
-  // The DOM elements handled by a widget will receive a handled class
-  // to differenciate them from unhandled elements.
-  const handledClass = `${name}-handled`;
-
   // This method will test if an element can be handled by the current widget.
   // It will test for both the handled class presence and the widget
   // conditions. Note that if both the `if` and `unless` conditions
   // are passed in the options object they will be tested as both part
   // of a single `&&` condition.
-  function canBeHandled(element) {
-    let res = !element.classList.contains(handledClass);
+  function canBeHandled(element, widget) {
+    let res = !widgets.hasBeenHandled(element, widget);
     res = ifCond ? res && testCondition(ifCond, element) : res;
     res = unlessCond ? res && !testCondition(unlessCond, element) : res;
     return res;
@@ -143,11 +139,9 @@ export default function widgets(name, selector, options = {}, block) {
     const elements = targetDocument.querySelectorAll(selector);
 
     asArray(elements).forEach((element) => {
-      if (!canBeHandled(element)) { return; }
+      if (!canBeHandled(element, name)) { return; }
 
-      const widget = new Widget(
-        element, elementHandle, clone(options), handledClass
-      );
+      const widget = new Widget(element, elementHandle, clone(options));
 
       widget.init();
 
@@ -179,6 +173,19 @@ export default function widgets(name, selector, options = {}, block) {
     }
   });
 }
+
+/**
+ * Returns whether the specified `element` has been handled by the specified
+ * `widget` handler.
+ *
+ * @param  {HTMLElement} element the element to check whether
+ *                               it was handled or not
+ * @param  {string} widjet the name of the widget handler to check
+ *                         against the element
+ */
+widgets.hasBeenHandled = function hasBeenHandled(element, widget) {
+  return this.widgetsFor(element, widget);
+};
 
 /**
  * A helper function used to dispatch an event from a given `source` or from

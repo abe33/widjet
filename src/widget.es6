@@ -3,7 +3,7 @@ export default class Widget {
     this.active = false;
     this.element = element;
     this.options = options;
-    this.handledClass = handledClass;
+    // this.handledClass = handledClass;
 
     if (typeof handler === 'object') {
       this.onInitialize = handler.initialize;
@@ -32,7 +32,7 @@ export default class Widget {
   init() {
     if (this.initialized) { return; }
 
-    this.element.classList.add(this.handledClass);
+    // this.element.classList.add(this.handledClass);
     const args = [this.element, this];
     if (this.handler) { this.disposable = this.handler.apply(this, args); }
     this.onInitialize && this.onInitialize();
@@ -43,7 +43,7 @@ export default class Widget {
   dispose() {
     if (this.disposed) { return; }
 
-    this.element.classList.remove(this.handledClass);
+    // this.element.classList.remove(this.handledClass);
 
     this.disposable && this.disposable.dispose();
     this.onDispose && this.onDispose();

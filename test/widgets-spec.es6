@@ -106,8 +106,8 @@ describe('widgets', () => {
       expect(eventSpy.called).to.be.ok();
     });
 
-    it('decorates the target node with a handled class', () => {
-      expect(element.classList.contains('dummy-handled')).to.be.ok();
+    it('stores that this element has been handled', () => {
+      expect(widgets.hasBeenHandled(element, 'dummy')).to.be.ok();
     });
 
     it('passes any extra options to the widget definition function', () => {
