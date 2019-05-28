@@ -33,6 +33,10 @@ describe('Widget', () => {
       widget.init();
       expect(widget.onInitialize.callCount).to.eql(1);
     });
+
+    it('adds the handled class on the target element', () => {
+      expect(widget.element.classList.contains('dummy-handled')).to.be.ok();
+    });
   });
 
   describe('#activate()', () => {
@@ -65,7 +69,12 @@ describe('Widget', () => {
   });
 
   describe('#dispose()', () => {
-    beforeEach(() => { widget.dispose(); });
+    let element;
+
+    beforeEach(() => {
+      element = widget.element;
+      widget.dispose();
+    });
 
     it('calls the onDispose hook', () => {
       expect(widget.onDispose.called).to.be.ok();
@@ -74,6 +83,10 @@ describe('Widget', () => {
     it('calls the onDispose only once', () => {
       widget.dispose();
       expect(widget.onDispose.callCount).to.eql(1);
+    });
+
+    it('removes the handled class from the target element', () => {
+      expect(element.classList.contains('dummy-handled')).not.to.be.ok();
     });
   });
 });

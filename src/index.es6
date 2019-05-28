@@ -52,6 +52,7 @@ export default function widgets(name, selector, options = {}, block) {
   const ifCond = options.if;
   const unlessCond = options.unless;
   const targetFrame = options.targetFrame;
+  const handledClass = `${name}-handled`;
   let events = options.on || 'init';
   let mediaCondition = options.media;
   let mediaHandler;
@@ -141,7 +142,11 @@ export default function widgets(name, selector, options = {}, block) {
     asArray(elements).forEach((element) => {
       if (!canBeHandled(element, name)) { return; }
 
-      const widget = new Widget(element, elementHandle, clone(options));
+      const widget = new Widget(
+        element,
+        elementHandle,
+        clone(options),
+        handledClass);
 
       widget.init();
 
