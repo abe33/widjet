@@ -1,6 +1,5 @@
 import {domEvent, clone, asArray} from 'widjet-utils';
 import {DisposableEvent} from 'widjet-disposables';
-import Hash from './hash';
 import Widget from './widget';
 
 /**
@@ -77,9 +76,9 @@ export default function widgets(name, selector, options = {}, block) {
   // Events can be passed as a string with event names separated with spaces.
   if (typeof events === 'string') { events = events.split(/\s+/g); }
 
-  // The widgets instances are stored in a Hash with the DOM element they
+  // The widgets instances are stored in a Map with the DOM element they
   // target as key. The instances hashes are stored per widget type.
-  const instances = INSTANCES[name] || (INSTANCES[name] = new Hash());
+  const instances = INSTANCES[name] || (INSTANCES[name] = new Map());
 
   // This method execute a test condition for the given element. The condition
   // can be either a function or a value converted to boolean.
@@ -130,7 +129,7 @@ export default function widgets(name, selector, options = {}, block) {
     };
 
     widgets.subscribe(name, targetWindow, 'resize', () => {
-      instances.eachPair((element, widget) => mediaHandler(element, widget));
+      instances.forEach((widget, element) => mediaHandler(element, widget));
     });
   }
 
@@ -314,7 +313,7 @@ widgets.widgetsFor = function(element, widget) {
   } else {
     return Object.keys(INSTANCES)
       .map(key => INSTANCES[key])
-      .filter(instances => instances.hasKey(element))
+      .filter(instances => instances.has(element))
       .map(instances => instances.get(element))
       .reduce((memo, arr) => memo.concat(arr), []);
   }
@@ -358,7 +357,7 @@ widgets.subscribe = function(name, to, evt, handler) {
 widgets.release = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.dispose());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.dispose());
   });
 };
 
@@ -370,7 +369,7 @@ widgets.release = function(...names) {
 widgets.activate = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.activate());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.activate());
   });
 };
 
@@ -382,6 +381,6 @@ widgets.activate = function(...names) {
 widgets.deactivate = function(...names) {
   if (names.length === 0) { names = Object.keys(INSTANCES); }
   names.forEach(name => {
-    INSTANCES[name] && INSTANCES[name].each(value => value.deactivate());
+    INSTANCES[name] && INSTANCES[name].forEach(value => value.deactivate());
   });
 };
