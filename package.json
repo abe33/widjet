@@ -51,11 +51,11 @@
     "mocha-jsdom": "^2.0.0",
     "nyc": "^14.1.1",
     "sinon": "^1.17.7",
-    "widjet-test-utils": "^1.9.1"
+    "widjet-test-utils": "^1.11"
   },
   "dependencies": {
-    "widjet-disposables": "^1.0.0",
-    "widjet-utils": "^1.1.0"
+    "widjet-disposables": "^1.1.0",
+    "widjet-utils": "^1.2.0"
   },
   "standard": {
     "parser": "babel-eslint",
