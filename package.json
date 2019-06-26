@@ -3,17 +3,17 @@
   "version": "1.2.0",
   "description": "A simple and lightweight widget helper for the web",
   "main": "lib/index.js",
-  "jsnext:main": "src/index.es6",
+  "jsnext:main": "src/index.js",
   "scripts": {
-    "test": "nyc mocha --timeout 5000 --recursive test/**/*.es6 test/*.es6",
+    "test": "nyc mocha --timeout 5000 --recursive test/**/*.js test/*.js",
     "lcov_report": "nyc report --reporter=lcov",
     "coverage": "npm run lcov_report && codecov",
     "babel": "babel src --out-dir lib",
-    "lint": "eslint src/*.es6 test/*.es6",
-    "lint:fix": "eslint --fix src/*.es6 test/*.es6",
+    "lint": "eslint src/*.js test/*.js",
+    "lint:fix": "eslint --fix src/*.js test/*.js",
     "esdoc": "esdoc -c esdoc.json",
     "prepublishOnly": "npm run babel",
-    "start": "widjet-test-server test/**/*.es6"
+    "start": "widjet-test-server test/**/*.js"
   },
   "keywords": [
     "widgets",
@@ -82,10 +82,10 @@
   },
   "nyc": {
     "include": [
-      "src/*.es6"
+      "src/*.js"
     ],
     "extension": [
-      ".es6"
+      ".js"
     ],
     "require": [
       "@babel/register"
